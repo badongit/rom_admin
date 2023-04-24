@@ -1,0 +1,17 @@
+export const APIEnum = {
+  REGISTER: "/auth/register",
+  LOGIN: "/auth/login",
+  PROFILE: "/auth/me",
+  GET_TOKEN: "/auth/token",
+  FLOOR: "/floors",
+  CATEGORY: "/category",
+  COLOR: "/color",
+  COUPON: "/coupon",
+  STORAGE: "/storage",
+  SPECIFICATION: "/specification",
+  SETTING: "/setting",
+  PRODUCT: "/product",
+  USER: "/user",
+  DASHBOARD: "/dashboard",
+  ORDER: "/order",
+};
