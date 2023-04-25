@@ -17,17 +17,17 @@ export default function Setting() {
   const state = useSelector((state) => state.setting);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    form.setFieldsValue({
-      title: state.item?.title,
-      description: state.item?.description,
-      keyword: state.item?.keyword,
-    });
-  }, [form, state]);
+  // useEffect(() => {
+  //   form.setFieldsValue({
+  //     title: state.item?.title,
+  //     description: state.item?.description,
+  //     keyword: state.item?.keyword,
+  //   });
+  // }, [form, state]);
 
   const onFinish = (values) => {
     console.log("values", values);
-    dispatch(updateSetting(values, () => dispatch(detailSetting())));
+    // dispatch(updateSetting(values, () => dispatch(detailSetting())));
   };
 
   return (

@@ -29,11 +29,7 @@ export const listFloor = (query) => {
 export const createFloor = (data, fn) => {
   return async (dispatch) => {
     try {
-      const form = new FormData();
-      form.append("name", data.name);
-      form.append("description", data.description);
-      form.append("images", data.images.file.originFileObj);
-      const response = await create(form);
+      const response = await create(data);
 
       if (response.statusCode !== 201) {
         notification.open({
@@ -60,12 +56,7 @@ export const createFloor = (data, fn) => {
 export const updateFloor = (id, data, fn) => {
   return async (dispatch) => {
     try {
-      const form = new FormData();
-      form.append("name", data.name);
-      form.append("description", data.description);
-      if (data.images?.file?.originFileObj)
-        form.append("images", data.images.file.originFileObj);
-      const response = await update(id, form);
+      const response = await update(id, data);
 
       if (response.statusCode !== 200) {
         notification.open({

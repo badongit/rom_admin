@@ -11,14 +11,14 @@ export default function PrivateRouter({
   roles = [ROLE.ADMIN],
   ...rest
 }) {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const state = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const location = useLocation();
   const path = location.pathname;
 
   useEffect(() => {
-    dispatch(getProfile(() => setTimeout(() => setIsLoading(false), 0)));
+    // dispatch(getProfile(() => setTimeout(() => setIsLoading(false), 0)));
   }, [dispatch]);
 
   if (state.token) {

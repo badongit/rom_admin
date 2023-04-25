@@ -9,28 +9,33 @@ import {
   Input,
   Pagination,
   Popconfirm,
+  Select,
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  createColor,
-  deleteColor,
-  detailColor,
-  listColor,
-  updateColor,
-} from "../../redux/actions/color.action";
+  createTable,
+  deleteTable,
+  detailTable,
+  listTable,
+  updateTable,
+} from "../../redux/actions/table.action";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Option } from "antd/lib/mentions";
+import { listFloor } from "../../redux/actions/floor.action";
 
 export default function Color() {
   const [visible, setVisible] = useState(false);
   const [page, setPage] = useState(1);
   const [mode, setMode] = useState();
   const [id, setId] = useState();
+
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-  const state = useSelector((state) => state.color);
+  const state = useSelector((state) => state);
 
   useEffect(() => {
-    dispatch(listColor({ page }));
+    dispatch(listTable({ page }));
+    dispatch(listFloor({ page: 1 }));
   }, [dispatch, page]);
 
   const columns = [
@@ -39,8 +44,12 @@ export default function Color() {
       dataIndex: "id",
     },
     {
-      title: "Tên màu",
-      dataIndex: "name",
+      title: "Mã bàn",
+      dataIndex: "code",
+    },
+    {
+      title: "Số người tối đa",
+      dataIndex: "maxPeople",
     },
     {
       title: "Hành động",
@@ -53,7 +62,7 @@ export default function Color() {
               title="Bạn có muốn xoá bản ghi này?"
               onConfirm={() =>
                 dispatch(
-                  deleteColor(item.id, () => dispatch(listColor({ page })))
+                  deleteTable(item.id, () => dispatch(listTable({ page })))
                 )
               }
               okText="Có"
@@ -82,12 +91,25 @@ export default function Color() {
     setPage(page);
   };
 
+  function onChangeFloor(value) {
+    console.log(`selected ${value}`);
+  }
+
+  function onSearch(val) {
+    console.log("search:", val);
+  }
+
   useEffect(() => {
     form.setFieldsValue({
-      name: state.item.name,
-      description: state.item.description,
+      code: state.table.item.code,
+      maxPeople: state.table.item.maxPeople,
+      floorId: state.table.item.floorId,
     });
-  }, [form, state.item]);
+  }, [form, state.table]);
+
+  useEffect(() => {
+    console.log(state.floor);
+  }, [state.floor]);
 
   const showModal = () => {
     form.resetFields();
@@ -99,15 +121,15 @@ export default function Color() {
     setId(id);
     setMode("UPDATE");
     setVisible(true);
-    dispatch(detailColor(id));
+    dispatch(detailTable(id));
   };
 
   const showTitle = (mode) => {
     switch (mode) {
       case "CREATE":
-        return "Tạo mới màu sắc";
+        return "Tạo mới bàn";
       case "UPDATE":
-        return "Cập nhật màu sắc";
+        return "Cập nhật bàn";
       default:
         break;
     }
@@ -130,12 +152,13 @@ export default function Color() {
   };
 
   const onFinish = (values) => {
+    console.log("🚀 ~ file: index.js:154 ~ onFinish ~ values:", values);
     switch (mode) {
       case "CREATE":
-        dispatch(createColor(values, () => dispatch(listColor({ page }))));
+        dispatch(createTable(values, () => dispatch(listTable({ page }))));
         break;
       case "UPDATE":
-        dispatch(updateColor(id, values, () => dispatch(listColor({ page }))));
+        dispatch(updateTable(id, values, () => dispatch(listTable({ page }))));
         break;
       default:
         break;
@@ -151,7 +174,7 @@ export default function Color() {
 
   return (
     <MainLayout>
-      <h2>Danh sách màu sắc</h2>
+      <h2>Danh sách bàn</h2>
       <Space style={{ marginBottom: 20 }}>
         <Button type="primary" onClick={showModal}>
           Tạo mới
@@ -175,13 +198,43 @@ export default function Color() {
           form={form}
         >
           <Form.Item
-            label="Tên màu sắc"
-            name="name"
-            rules={[{ required: true, message: "Vui lòng nhập tên màu sắc" }]}
+            label="Mã bàn"
+            name="code"
+            rules={[{ required: true, message: "Vui lòng nhập tên bàn" }]}
           >
             <Input />
           </Form.Item>
-
+          <Form.Item
+            label="Số người tối đa"
+            name="maxPeople"
+            rules={[
+              { required: true, message: "Vui lòng nhập số người tối đa" },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Tầng"
+            name="floorId"
+            rules={[{ required: true, message: "Vui lòng chọn tầng" }]}
+          >
+            <Select
+              showSearch
+              placeholder="Chọn tầng"
+              optionFilterProp="children"
+              onChange={onChangeFloor}
+              onSearch={onSearch}
+              filterOption={(input, option) =>
+                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+            >
+              {state.floor.items?.length
+                ? state.floor.items.map((item) => (
+                    <Option value={item.id}>{item.name}</Option>
+                  ))
+                : []}
+            </Select>
+          </Form.Item>
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Button type="primary" htmlType="submit">
               {showLableButton(mode)}
@@ -189,11 +242,15 @@ export default function Color() {
           </Form.Item>
         </Form>
       </Modal>
-      <Table columns={columns} dataSource={state.items} pagination={false} />
+      <Table
+        columns={columns}
+        dataSource={state.table.items}
+        pagination={false}
+      />
       <Pagination
         style={{ marginTop: 10 }}
         current={page}
-        total={state.meta.total}
+        total={state.table.meta.total}
         onChange={onChange}
       />
     </MainLayout>

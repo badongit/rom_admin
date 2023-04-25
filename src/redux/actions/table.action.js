@@ -5,15 +5,15 @@ import {
   list,
   remove,
   update,
-} from "../../service/color.service";
+} from "../../service/table.service";
 import * as types from "../constants";
 
-export const listColor = (query) => {
+export const listTable = (query) => {
   return async (dispatch) => {
     try {
       const response = await list(query);
       dispatch({
-        type: types.LIST_COLOR,
+        type: types.LIST_TABLE,
         data: response.data,
       });
     } catch (error) {
@@ -26,7 +26,7 @@ export const listColor = (query) => {
   };
 };
 
-export const createColor = (data, cb) => {
+export const createTable = (data, cb) => {
   return async (dispatch) => {
     try {
       const response = await create(data);
@@ -53,7 +53,7 @@ export const createColor = (data, cb) => {
   };
 };
 
-export const updateColor = (id, data, cb) => {
+export const updateTable = (id, data, cb) => {
   return async (dispatch) => {
     try {
       const response = await update(id, data);
@@ -80,7 +80,7 @@ export const updateColor = (id, data, cb) => {
   };
 };
 
-export const deleteColor = (id, cb) => {
+export const deleteTable = (id, cb) => {
   return async (dispatch) => {
     try {
       const response = await remove(id);
@@ -107,12 +107,12 @@ export const deleteColor = (id, cb) => {
   };
 };
 
-export const detailColor = (id) => {
+export const detailTable = (id) => {
   return async (dispatch) => {
     try {
       const response = await detail(id);
       dispatch({
-        type: types.DETAIL_COLOR,
+        type: types.DETAIL_TABLE,
         data: response.data,
       });
     } catch (error) {

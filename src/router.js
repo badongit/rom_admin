@@ -1,7 +1,7 @@
 import NotFound from "./components/NotFound";
 import { Endpoint } from "./constants/endpoint";
 import PrivateRouter from "./containers/PrivateRouter";
-import Branch from "./pages/Branch";
+import Floor from "./pages/Floor";
 import Category from "./pages/Category";
 import Color from "./pages/Color";
 import Coupon from "./pages/Coupon";
@@ -24,8 +24,8 @@ const routes = [
     element: <PrivateRouter component={Dashboard} />,
   },
   {
-    path: Endpoint.BRANCH,
-    element: <PrivateRouter component={Branch} />,
+    path: Endpoint.FLOOR,
+    element: <PrivateRouter component={Floor} />,
   },
   {
     path: Endpoint.SETTING,
@@ -36,7 +36,7 @@ const routes = [
     element: <PrivateRouter component={Category} />,
   },
   {
-    path: Endpoint.COLOR,
+    path: Endpoint.TABLE,
     element: <PrivateRouter component={Color} />,
   },
   {

@@ -1,8 +1,8 @@
 import { combineReducers } from "redux";
 import authReducer from "./auth.reducer";
-import branchReducer from "./branch.reducer";
+import floorReducer from "./floor.reducer";
 import categoryReducer from "./category.reducer";
-import colorReducer from "./color.reducer";
+import tableReducer from "./table.reducer";
 import couponReducer from "./coupon.reducer";
 import dashboardReducer from "./dashboard.reducer";
 import orderReducer from "./order.reducer";
@@ -14,9 +14,9 @@ import userReducer from "./user.reducer";
 
 const rootReducer = combineReducers({
   auth: authReducer,
-  branch: branchReducer,
+  floor: floorReducer,
   category: categoryReducer,
-  color: colorReducer,
+  table: tableReducer,
   coupon: couponReducer,
   storage: storageReducer,
   specification: specificationReducer,

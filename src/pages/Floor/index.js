@@ -1,8 +1,4 @@
-import {
-  DeleteOutlined,
-  EditOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import {
   Button,
   Form,
@@ -12,12 +8,9 @@ import {
   Popconfirm,
   Space,
   Table,
-  Upload,
 } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { formatTime } from "../../common/common";
-import { BASE_URL } from "../../constants/config";
 import MainLayout from "../../containers/MainLayout";
 import {
   createFloor,
@@ -31,11 +24,10 @@ export default function Branch() {
   const [visible, setVisible] = useState(false);
   const [page, setPage] = useState(1);
   const [mode, setMode] = useState();
-  const [images, setImages] = useState([]);
   const [id, setId] = useState();
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-  const state = useSelector((state) => state.branch);
+  const state = useSelector((state) => state.floor);
 
   useEffect(() => {
     dispatch(listFloor({ page }));
@@ -93,25 +85,12 @@ export default function Branch() {
   useEffect(() => {
     form.setFieldsValue({
       name: state.item.name,
-      description: state.item.description,
-      images: state.item.logo,
     });
-
-    setImages([
-      {
-        uid: "-1",
-        name: state.item.logo,
-        status: "done",
-        url: `${BASE_URL}/${state.item.logo}`,
-        thumbUrl: `${BASE_URL}/${state.item.logo}`,
-      },
-    ]);
   }, [form, state.item]);
 
   const showModal = () => {
     form.resetFields();
     setMode("CREATE");
-    setImages([]);
     setVisible(true);
   };
 
@@ -169,33 +148,6 @@ export default function Branch() {
     console.log("Failed:", errorInfo);
   };
 
-  const onChangeFileList = ({ fileList: newFileList }) => {
-    setImages(newFileList);
-  };
-
-  const props = {
-    action: `${BASE_URL}/api`,
-    listType: "picture",
-    beforeUpload(file) {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-          const img = document.createElement("img");
-          img.src = reader.result;
-          img.onload = () => {
-            const canvas = document.createElement("canvas");
-            canvas.width = img.naturalWidth;
-            canvas.height = img.naturalHeight;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0);
-            canvas.toBlob(resolve);
-          };
-        };
-      });
-    },
-  };
-
   return (
     <MainLayout>
       <h2>Danh sách tầng</h2>
@@ -221,33 +173,13 @@ export default function Branch() {
           autoComplete="off"
           form={form}
         >
-          <Form.Item label="Ảnh đại điện" name="images">
-            <Upload
-              {...props}
-              fileList={images}
-              onChange={onChangeFileList}
-              maxCount={1}
-            >
-              <Button icon={<UploadOutlined />}>Upload</Button>
-            </Upload>
-          </Form.Item>
           <Form.Item
-            label="Tên thương hiệu"
+            label="Tên tầng"
             name="name"
-            rules={[
-              { required: true, message: "Vui lòng nhập tên thương hiệu" },
-            ]}
+            rules={[{ required: true, message: "Vui lòng nhập tên tầng" }]}
           >
             <Input />
           </Form.Item>
-          <Form.Item
-            label="Mô tả"
-            name="description"
-            rules={[{ required: false }]}
-          >
-            <Input />
-          </Form.Item>
-
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Button type="primary" htmlType="submit">
               {showLableButton(mode)}

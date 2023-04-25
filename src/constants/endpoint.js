@@ -1,10 +1,10 @@
 export const Endpoint = {
   HOME: "/",
   DASHBOARD: "/dashboard",
-  BRANCH: "/branch",
+  FLOOR: "/floor",
   SETTING: "/setting",
   CATEGORY: "/category",
-  COLOR: "/color",
+  TABLE: "/table",
   COUPON: "/coupon",
   STORAGE: "/storage",
   SPECIFICATION: "/specification",
@@ -19,8 +19,12 @@ export const routers = [
     text: "Dashboard",
   },
   {
-    endpoint: Endpoint.BRANCH,
+    endpoint: Endpoint.FLOOR,
     text: "Quản lý tầng",
+  },
+  {
+    endpoint: Endpoint.TABLE,
+    text: "Quản lý bàn",
   },
   {
     endpoint: Endpoint.CATEGORY,
@@ -30,10 +34,7 @@ export const routers = [
     endpoint: Endpoint.PRODUCT,
     text: "Quản lý sản phẩm",
   },
-  {
-    endpoint: Endpoint.COLOR,
-    text: "Quản lý màu sắc",
-  },
+
   {
     endpoint: Endpoint.STORAGE,
     text: "Quản lý bộ nhớ",

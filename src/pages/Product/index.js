@@ -39,7 +39,7 @@ import {
   listProduct,
   updateProduct,
 } from "../../redux/actions/product.action";
-import { listColor } from "../../redux/actions/color.action";
+import { listTable } from "../../redux/actions/table.action";
 import { listStorage } from "../../redux/actions/storage.action";
 import { listSpecification } from "../../redux/actions/specification.action";
 import { BASE_URL } from "../../constants/config";
@@ -199,7 +199,7 @@ export default function Product() {
   const showModal = () => {
     dispatch(listCategory({ page: 1, isGetAll: 1 }));
     dispatch(listFloor({ page: 1, isGetAll: 1 }));
-    dispatch(listColor({ page: 1, isGetAll: 1 }));
+    dispatch(listTable({ page: 1, isGetAll: 1 }));
     dispatch(listStorage({ page: 1, isGetAll: 1 }));
     dispatch(listSpecification({ page: 1, isGetAll: 1 }));
     form.resetFields();
@@ -211,7 +211,7 @@ export default function Product() {
   const showModalUpdate = (id) => {
     dispatch(listCategory({ page: 1, isGetAll: 1 }));
     dispatch(listFloor({ page: 1, isGetAll: 1 }));
-    dispatch(listColor({ page: 1, isGetAll: 1 }));
+    dispatch(listTable({ page: 1, isGetAll: 1 }));
     dispatch(listStorage({ page: 1, isGetAll: 1 }));
     dispatch(listSpecification({ page: 1, isGetAll: 1 }));
     setId(id);
