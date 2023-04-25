@@ -3,7 +3,7 @@ import { Endpoint } from "./constants/endpoint";
 import PrivateRouter from "./containers/PrivateRouter";
 import Floor from "./pages/Floor";
 import Category from "./pages/Category";
-import Color from "./pages/Color";
+import Table from "./pages/Table";
 import Coupon from "./pages/Coupon";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
@@ -37,7 +37,7 @@ const routes = [
   },
   {
     path: Endpoint.TABLE,
-    element: <PrivateRouter component={Color} />,
+    element: <PrivateRouter component={Table} />,
   },
   {
     path: Endpoint.COUPON,

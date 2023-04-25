@@ -9,6 +9,7 @@ import {
   Input,
   Pagination,
   Popconfirm,
+  Upload,
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -18,14 +19,20 @@ import {
   listCategory,
   updateCategory,
 } from "../../redux/actions/category.action";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import { formatTime } from "../../common/common";
+import { BASE_URL } from "../../constants/config";
 
 export default function Category() {
   const [visible, setVisible] = useState(false);
   const [page, setPage] = useState(1);
   const [mode, setMode] = useState();
   const [id, setId] = useState();
+  const [images, setImages] = useState([]);
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const state = useSelector((state) => state.category);
@@ -42,20 +49,6 @@ export default function Category() {
     {
       title: "Tên danh mục",
       dataIndex: "name",
-    },
-    {
-      title: "Mô tả",
-      dataIndex: "description",
-    },
-    {
-      title: "Ngày tạo",
-      dataIndex: "createdAt",
-      render: (record) => formatTime(record),
-    },
-    {
-      title: "Ngày cập nhật",
-      dataIndex: "updatedAt",
-      render: (record) => formatTime(record),
     },
     {
       title: "Hành động",
@@ -102,8 +95,7 @@ export default function Category() {
   useEffect(() => {
     form.setFieldsValue({
       name: state.item.name,
-      description: state.item.description,
-      images: state.item.logo,
+      images: state.item.image,
     });
   }, [form, state.item]);
 
@@ -167,8 +159,35 @@ export default function Category() {
     form.resetFields();
   };
 
+  const onChangeFileList = ({ fileList: newFileList }) => {
+    setImages(newFileList);
+  };
+
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
+  };
+
+  const props = {
+    action: `${BASE_URL}/api`,
+    listType: "picture",
+    beforeUpload(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+          const img = document.createElement("img");
+          img.src = reader.result;
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            canvas.toBlob(resolve);
+          };
+        };
+      });
+    },
   };
 
   return (
@@ -203,14 +222,16 @@ export default function Category() {
           >
             <Input />
           </Form.Item>
-          <Form.Item
-            label="Mô tả"
-            name="description"
-            rules={[{ required: false }]}
-          >
-            <Input />
+          <Form.Item label="Ảnh đại điện" name="images">
+            <Upload
+              {...props}
+              fileList={images}
+              onChange={onChangeFileList}
+              maxCount={1}
+            >
+              <Button icon={<UploadOutlined />}>Upload</Button>
+            </Upload>
           </Form.Item>
-
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Button type="primary" htmlType="submit">
               {showLableButton(mode)}

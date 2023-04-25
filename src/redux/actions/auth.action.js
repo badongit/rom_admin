@@ -9,7 +9,7 @@ export const login = (user) => {
 
       if (
         response.statusCode !== 200 ||
-        response.data?.role?.code !== "ADMIN"
+        response.data?.user?.role?.code !== "ADMIN"
       ) {
         notification.open({
           message: "Đăng nhập thất bại.",

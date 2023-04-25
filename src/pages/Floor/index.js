@@ -20,7 +20,7 @@ import {
   updateFloor,
 } from "../../redux/actions/floor.action";
 
-export default function Branch() {
+export default function Floor() {
   const [visible, setVisible] = useState(false);
   const [page, setPage] = useState(1);
   const [mode, setMode] = useState();

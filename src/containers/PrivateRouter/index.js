@@ -18,7 +18,7 @@ export default function PrivateRouter({
   const path = location.pathname;
 
   useEffect(() => {
-    // dispatch(getProfile(() => setTimeout(() => setIsLoading(false), 0)));
+    dispatch(getProfile(() => setTimeout(() => setIsLoading(false), 0)));
   }, [dispatch]);
 
   if (state.token) {

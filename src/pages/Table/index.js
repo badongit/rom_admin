@@ -107,10 +107,6 @@ export default function Color() {
     });
   }, [form, state.table]);
 
-  useEffect(() => {
-    console.log(state.floor);
-  }, [state.floor]);
-
   const showModal = () => {
     form.resetFields();
     setMode("CREATE");

@@ -29,7 +29,10 @@ export const listCategory = (query) => {
 export const createCategory = (data, cb) => {
   return async (dispatch) => {
     try {
-      const response = await create(data);
+      const form = new FormData();
+      form.append("name", data.name);
+      form.append("image", data.images.file.originFileObj);
+      const response = await create(form);
 
       if (response.statusCode !== 201) {
         notification.open({
