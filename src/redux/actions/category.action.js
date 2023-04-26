@@ -59,6 +59,10 @@ export const createCategory = (data, cb) => {
 export const updateCategory = (id, data, cb) => {
   return async (dispatch) => {
     try {
+      const form = new FormData();
+      form.append("name", data.name);
+      form.append("image", data.images.file.originFileObj);
+
       const response = await update(id, data);
 
       if (response.statusCode !== 200) {

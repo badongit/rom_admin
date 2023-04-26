@@ -11,7 +11,7 @@ export const create = (data) =>
     },
   });
 export const update = (id, data) =>
-  axios.put(`${APIEnum.CATEGORY}/${id}`, data, {
+  axios.patch(`${APIEnum.CATEGORY}/${id}`, data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

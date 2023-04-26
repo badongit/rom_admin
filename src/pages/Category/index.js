@@ -95,8 +95,16 @@ export default function Category() {
   useEffect(() => {
     form.setFieldsValue({
       name: state.item.name,
-      images: state.item.image,
     });
+    if (state.item) {
+      setImages([
+        {
+          name: state.item.image,
+          id: state.item.id,
+          url: BASE_URL + "/" + state.item.image,
+        },
+      ]);
+    }
   }, [form, state.item]);
 
   const showModal = () => {
