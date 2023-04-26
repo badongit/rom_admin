@@ -6,7 +6,7 @@ export * from "./coupon.constants";
 export * from "./storage.constants";
 export * from "./specification.constants";
 export * from "./setting.constants";
-export * from "./product.constants";
+export * from "./dish.constants";
 export * from "./user.constants";
 export * from "./order.constants";
 export * from "./dashboard.constant";

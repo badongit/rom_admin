@@ -8,7 +8,7 @@ export const Endpoint = {
   COUPON: "/coupon",
   STORAGE: "/storage",
   SPECIFICATION: "/specification",
-  PRODUCT: "/product",
+  DISH: "/dish",
   USER: "/user",
   ORDER: "/order",
 };

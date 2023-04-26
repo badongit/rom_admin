@@ -7,24 +7,24 @@ const initialState = {
   productSells: [],
 };
 
-const productReducer = (state = initialState, action) => {
+const dishReducer = (state = initialState, action) => {
   switch (action.type) {
-    case types.LIST_PRODUCT:
+    case types.LIST_DISH:
       return {
         ...state,
         items: action.data.items,
         meta: action.data.meta,
       };
-    case types.CREATE_PRODUCT:
-    case types.DELETE_PRODUCT:
-    case types.UPDATE_PRODUCT:
+    case types.CREATE_DISH:
+    case types.DELETE_DISH:
+    case types.UPDATE_DISH:
       return state;
-    case types.DETAIL_PRODUCT:
+    case types.DETAIL_DISH:
       return {
         ...state,
         item: action.data,
       };
-    case types.LIST_PRODUCT_SELL:
+    case types.LIST_DISH_SELL:
       return {
         ...state,
         productSells: action.data.items,
@@ -35,4 +35,4 @@ const productReducer = (state = initialState, action) => {
   }
 };
 
-export default productReducer;
+export default dishReducer;

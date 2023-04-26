@@ -8,7 +8,7 @@ import Coupon from "./pages/Coupon";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Order from "./pages/Order";
-import Product from "./pages/Product";
+import Dish from "./pages/Dish";
 import Setting from "./pages/Setting";
 import Specification from "./pages/Specification";
 import Storage from "./pages/Storage";
@@ -52,8 +52,8 @@ const routes = [
     element: <PrivateRouter component={Specification} />,
   },
   {
-    path: Endpoint.PRODUCT,
-    element: <PrivateRouter component={Product} />,
+    path: Endpoint.DISH,
+    element: <PrivateRouter component={Dish} />,
   },
   {
     path: Endpoint.USER,

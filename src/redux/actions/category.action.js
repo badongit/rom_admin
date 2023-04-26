@@ -57,13 +57,19 @@ export const createCategory = (data, cb) => {
 };
 
 export const updateCategory = (id, data, cb) => {
+  console.log(
+    "🚀 ~ file: category.action.js:60 ~ updateCategory ~ data:",
+    data
+  );
   return async (dispatch) => {
     try {
       const form = new FormData();
       form.append("name", data.name);
-      form.append("image", data.images.file.originFileObj);
+      if (data.images?.file) {
+        form.append("image", data.images.file.originFileObj);
+      }
 
-      const response = await update(id, data);
+      const response = await update(id, form);
 
       if (response.statusCode !== 200) {
         notification.open({

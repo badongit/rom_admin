@@ -12,10 +12,7 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import {
-  listProduct,
-  listProductSell,
-} from "../../redux/actions/product.action";
+import { listDish, listDishSell } from "../../redux/actions/dish.action";
 import { useDispatch, useSelector } from "react-redux";
 import {
   dashboardCustomer,
@@ -99,12 +96,12 @@ export default function Dashboard() {
       endDate: moment(to1).startOf("day").toISOString(),
     };
 
-    dispatch(listProduct({ page: 1, orderView: -1, limit: 5 }));
+    dispatch(listDish({ page: 1, orderView: -1, limit: 5 }));
     dispatch(dashboardSummary());
     dispatch(dashboardCustomer());
     dispatch(dashboardOrder(params));
     dispatch(dashboardOrderMoney(params1));
-    dispatch(listProductSell({ page: 1, orderSell: -1, limit: 5 }));
+    dispatch(listDishSell({ page: 1, orderSell: -1, limit: 5 }));
   }, [dispatch]);
 
   const refreshData = () => {

@@ -1,54 +1,45 @@
-import React, { useEffect, useState } from "react";
-import MainLayout from "../../containers/MainLayout";
-import {
-  Button,
-  Modal,
-  Space,
-  Table,
-  Form,
-  Input,
-  Upload,
-  Pagination,
-  Popconfirm,
-  Row,
-  Col,
-  Select,
-  InputNumber,
-  Tabs,
-} from "antd";
-import { useDispatch, useSelector } from "react-redux";
-import { listFloor } from "../../redux/actions/floor.action";
 import {
   DeleteOutlined,
   EditOutlined,
-  PlusOutlined,
-  MinusCircleOutlined,
   EyeOutlined,
+  MinusCircleOutlined,
+  PlusOutlined,
 } from "@ant-design/icons";
 import {
-  formatMoney,
-  formatTime,
-  formatTitle,
-  getBase64,
-} from "../../common/common";
-import { listCategory } from "../../redux/actions/category.action";
-import {
-  createProduct,
-  deleteProduct,
-  detailProduct,
-  listProduct,
-  updateProduct,
-} from "../../redux/actions/product.action";
-import { listTable } from "../../redux/actions/table.action";
-import { listStorage } from "../../redux/actions/storage.action";
-import { listSpecification } from "../../redux/actions/specification.action";
-import { BASE_URL } from "../../constants/config";
+  Button,
+  Col,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Pagination,
+  Popconfirm,
+  Row,
+  Select,
+  Space,
+  Table,
+  Tabs,
+  Upload,
+} from "antd";
 import BraftEditor from "braft-editor";
 import parse from "html-react-parser";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { formatMoney, getBase64 } from "../../common/common";
+import { BASE_URL } from "../../constants/config";
+import MainLayout from "../../containers/MainLayout";
+import { listCategory } from "../../redux/actions/category.action";
+import {
+  createDish,
+  deleteDish,
+  detailDish,
+  listDish,
+  updateDish,
+} from "../../redux/actions/dish.action";
 
 const { Option } = Select;
 
-export default function Product() {
+export default function Dish() {
   const [visible, setVisible] = useState(false);
   const [visibleDetail, setVisibleDetail] = useState(false);
   const [page, setPage] = useState(1);
@@ -65,9 +56,9 @@ export default function Product() {
 
   useEffect(() => {
     if (keyword) {
-      dispatch(listProduct({ page, keyword }));
+      dispatch(listDish({ page, keyword }));
     } else {
-      dispatch(listProduct({ page }));
+      dispatch(listDish({ page }));
     }
   }, [dispatch, page]);
 
@@ -88,33 +79,17 @@ export default function Product() {
       dataIndex: "id",
     },
     {
-      title: "Tên sản phẩm",
+      title: "Tên món ăn",
       dataIndex: "name",
     },
     {
       title: "Danh mục",
-      dataIndex: "category",
-      render: (record) => record.name,
+      dataIndex: "categoryName",
+      render: (record) => record.category.name,
     },
     {
-      title: "Mô tả ngắn",
-      dataIndex: "shortDescription",
-      render: (record) => {
-        const a = formatTitle(record);
-        console.log("======", a);
-        return a;
-      },
-    },
-    {
-      title: "Ngày tạo",
-      dataIndex: "createdAt",
-
-      render: (record) => formatTime(record),
-    },
-    {
-      title: "Ngày cập nhật",
-      dataIndex: "updatedAt",
-      render: (record) => formatTime(record),
+      title: "Giá",
+      dataIndex: "price",
     },
     {
       title: "Hành động",
@@ -134,7 +109,7 @@ export default function Product() {
               title="Bạn có muốn xoá bản ghi này?"
               onConfirm={() =>
                 dispatch(
-                  deleteProduct(item.id, () => dispatch(listProduct({ page })))
+                  deleteDish(item.id, () => dispatch(listDish({ page })))
                 )
               }
               okText="Có"
@@ -165,43 +140,24 @@ export default function Product() {
 
   useEffect(() => {
     form.setFieldsValue({
-      name: state.product.item.name,
-      description: BraftEditor.createEditorState(
-        state.product.item.description
-      ),
-      shortDescription: state.product.item.shortDescription,
-      categoryId: state.product.item?.category?.id,
-      branchId: state.product.item?.branch?.id,
-      productVersions: state.product.item?.productVersions?.map((e) => ({
-        storageId: e.storage.id,
-        colorId: e.color.id,
-        price: e.price,
-        salePrice: e.salePrice,
-        quantity: e.quantity,
-      })),
-      specificationDetails: state.product.item?.specifications?.map((e) => ({
-        specificationId: e.specificationId,
-        content: e.content,
-      })),
+      name: state.dish.item.name,
+      categoryId: state.dish.item?.category?.id,
+      price: state.dish.price,
     });
 
-    setFileList(
-      state.product.item?.productImages?.map((e) => ({
-        uid: e.id,
-        name: e.url,
-        status: "done",
-        url: `${BASE_URL}/${e.url}`,
-        thumbUrl: `${BASE_URL}/${e.url}`,
-      }))
-    );
-  }, [form, state.product.item]);
+    if (state.dish.item.id) {
+      setFileList([
+        {
+          name: state.dish.item.image,
+          id: state.dish.item.id,
+          url: BASE_URL + "/" + state.dish.item.image,
+        },
+      ]);
+    }
+  }, [form, state.dish.item]);
 
   const showModal = () => {
     dispatch(listCategory({ page: 1, isGetAll: 1 }));
-    dispatch(listFloor({ page: 1, isGetAll: 1 }));
-    dispatch(listTable({ page: 1, isGetAll: 1 }));
-    dispatch(listStorage({ page: 1, isGetAll: 1 }));
-    dispatch(listSpecification({ page: 1, isGetAll: 1 }));
     form.resetFields();
     setMode("CREATE");
     setVisible(true);
@@ -210,31 +166,27 @@ export default function Product() {
 
   const showModalUpdate = (id) => {
     dispatch(listCategory({ page: 1, isGetAll: 1 }));
-    dispatch(listFloor({ page: 1, isGetAll: 1 }));
-    dispatch(listTable({ page: 1, isGetAll: 1 }));
-    dispatch(listStorage({ page: 1, isGetAll: 1 }));
-    dispatch(listSpecification({ page: 1, isGetAll: 1 }));
     setId(id);
     setMode("UPDATE");
     setVisible(true);
-    dispatch(detailProduct(id));
+    dispatch(detailDish(id));
   };
 
   const showModalDetail = (id) => {
     setId(id);
     setMode("DETAIL");
     setVisibleDetail(true);
-    dispatch(detailProduct(id));
+    dispatch(detailDish(id));
   };
 
   const showTitle = (mode) => {
     switch (mode) {
       case "CREATE":
-        return "Tạo mới sản phẩm";
+        return "Tạo mới món ăn";
       case "UPDATE":
-        return "Cập nhật sản phẩm";
+        return "Cập nhật món ăn";
       case "DETAIL":
-        return "Chi tiết sản phẩm";
+        return "Chi tiết món ăn";
       default:
         break;
     }
@@ -261,13 +213,13 @@ export default function Product() {
     switch (mode) {
       case "CREATE":
         dispatch(
-          createProduct(
+          createDish(
             { ...values, description: values.description.toHTML() },
             () => {
               setVisible(false);
               setFileList([]);
               form.resetFields();
-              dispatch(listProduct({ page }));
+              dispatch(listDish({ page }));
             }
           )
         );
@@ -277,14 +229,14 @@ export default function Product() {
           values.images = { fileList };
         }
         dispatch(
-          updateProduct(
+          updateDish(
             id,
             { ...values, description: values.description.toHTML() },
             () => {
               setVisible(false);
               setFileList([]);
               form.resetFields();
-              dispatch(listProduct({ page }));
+              dispatch(listDish({ page }));
             }
           )
         );
@@ -321,13 +273,13 @@ export default function Product() {
   };
 
   const onSearchKeyword = (val) => {
-    dispatch(listProduct({ page: 1, keyword: val }));
+    dispatch(listDish({ page: 1, keyword: val }));
     setKeyword(val);
   };
 
   return (
     <MainLayout>
-      <h2>Danh sách sản phẩm</h2>
+      <h2>Danh sách món ăn</h2>
       <Row gutter={[16, 16]}>
         <Col offset={8} span={8}>
           <Input.Search
@@ -417,10 +369,10 @@ export default function Product() {
 
             <Col span={12}>
               <Form.Item
-                label="Tên sản phẩm"
+                label="Tên món ăn"
                 name="name"
                 rules={[
-                  { required: true, message: "Vui lòng nhập tên sản phẩm" },
+                  { required: true, message: "Vui lòng nhập tên món ăn" },
                 ]}
               >
                 <Input />
@@ -708,23 +660,23 @@ export default function Product() {
           <Row gutter={[16, 16]}>
             <Col span={12}>
               <Form.Item label="Danh mục" name="categoryId">
-                {state.product.item?.category?.name}
+                {state.dish.item?.category?.name}
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item label="Hãng" name="branchId">
-                {state.product.item?.branch?.name}
+                {state.dish.item?.branch?.name}
               </Form.Item>
             </Col>
 
             <Col span={12}>
-              <Form.Item label="Tên sản phẩm" name="name">
-                {state.product.item?.name}
+              <Form.Item label="Tên món ăn" name="name">
+                {state.dish.item?.name}
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item label="Mô tả ngắn" name="shortDescription">
-                {state.product.item?.shortDescription}
+                {state.dish.item?.shortDescription}
               </Form.Item>
             </Col>
           </Row>
@@ -763,7 +715,7 @@ export default function Product() {
                 labelCol={{ span: 4 }}
                 wrapperCol={{ span: 20 }}
               >
-                {parse(state.product.item?.description || "")}
+                {parse(state.dish.item?.description || "")}
               </Form.Item>
             </Col>
           </Row>
@@ -777,7 +729,7 @@ export default function Product() {
                 required={true}
               >
                 <Tabs defaultActiveKey="0">
-                  {state.product.item?.productVersions?.map((e, i) => (
+                  {state.dish.item?.productVersions?.map((e, i) => (
                     <Tabs.TabPane
                       tab={`${e.storage.name} - ${e.color.name}`}
                       key={i.toString()}
@@ -803,7 +755,7 @@ export default function Product() {
                   <Col span={6}>Thông số</Col>
                   <Col span={6}>Giá trị</Col>
                 </Row>
-                {state.product.item?.specifications?.map((e) => (
+                {state.dish.item?.specifications?.map((e) => (
                   <Row gutter={[16, 16]}>
                     <Col span={6}>{e.name}</Col>
                     <Col span={6}>{e.content}</Col>
@@ -816,13 +768,13 @@ export default function Product() {
       </Modal>
       <Table
         columns={columns}
-        dataSource={state.product.items}
+        dataSource={state.dish.items}
         pagination={false}
       />
       <Pagination
         style={{ marginTop: 10 }}
         current={page}
-        total={state.product.meta.total}
+        total={state.dish.meta.total}
         onChange={onChange}
       />
     </MainLayout>

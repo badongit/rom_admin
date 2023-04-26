@@ -6,7 +6,7 @@ import tableReducer from "./table.reducer";
 import couponReducer from "./coupon.reducer";
 import dashboardReducer from "./dashboard.reducer";
 import orderReducer from "./order.reducer";
-import productReducer from "./product.reducer";
+import dishReducer from "./dish.reducer";
 import settingReducer from "./setting.reducer";
 import specificationReducer from "./specification.reducer";
 import storageReducer from "./storage.reducer";
@@ -21,7 +21,7 @@ const rootReducer = combineReducers({
   storage: storageReducer,
   specification: specificationReducer,
   setting: settingReducer,
-  product: productReducer,
+  dish: dishReducer,
   user: userReducer,
   order: orderReducer,
   dashboard: dashboardReducer,

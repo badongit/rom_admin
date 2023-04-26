@@ -5,15 +5,15 @@ import {
   list,
   remove,
   update,
-} from "../../service/product.service";
+} from "../../service/dish.service";
 import * as types from "../constants";
 
-export const listProduct = (query) => {
+export const listDish = (query) => {
   return async (dispatch) => {
     try {
       const response = await list(query);
       dispatch({
-        type: types.LIST_PRODUCT,
+        type: types.LIST_DISH,
         data: response.data,
       });
     } catch (error) {
@@ -26,7 +26,7 @@ export const listProduct = (query) => {
   };
 };
 
-export const createProduct = (data, cb) => {
+export const createDish = (data, cb) => {
   return async (dispatch) => {
     try {
       const form = new FormData();
@@ -71,7 +71,7 @@ export const createProduct = (data, cb) => {
   };
 };
 
-export const updateProduct = (id, data, cb) => {
+export const updateDish = (id, data, cb) => {
   return async (dispatch) => {
     try {
       const form = new FormData();
@@ -116,7 +116,7 @@ export const updateProduct = (id, data, cb) => {
   };
 };
 
-export const deleteProduct = (id, cb) => {
+export const deleteDish = (id, cb) => {
   return async (dispatch) => {
     try {
       const response = await remove(id);
@@ -143,12 +143,12 @@ export const deleteProduct = (id, cb) => {
   };
 };
 
-export const detailProduct = (id) => {
+export const detailDish = (id) => {
   return async (dispatch) => {
     try {
       const response = await detail(id);
       dispatch({
-        type: types.DETAIL_PRODUCT,
+        type: types.DETAIL_DISH,
         data: response.data,
       });
     } catch (error) {
@@ -161,12 +161,12 @@ export const detailProduct = (id) => {
   };
 };
 
-export const listProductSell = (query) => {
+export const listDishSell = (query) => {
   return async (dispatch) => {
     try {
       const response = await list(query);
       dispatch({
-        type: types.LIST_PRODUCT_SELL,
+        type: types.LIST_DISH_SELL,
         data: response.data,
       });
     } catch (error) {

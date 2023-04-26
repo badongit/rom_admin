@@ -96,7 +96,7 @@ export default function Category() {
     form.setFieldsValue({
       name: state.item.name,
     });
-    if (state.item) {
+    if (state.item.id) {
       setImages([
         {
           name: state.item.image,
