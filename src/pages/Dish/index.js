@@ -2,7 +2,6 @@ import {
   DeleteOutlined,
   EditOutlined,
   EyeOutlined,
-  MinusCircleOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
 import {
@@ -21,7 +20,6 @@ import {
   Tabs,
   Upload,
 } from "antd";
-import BraftEditor from "braft-editor";
 import parse from "html-react-parser";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -36,6 +34,7 @@ import {
   listDish,
   updateDish,
 } from "../../redux/actions/dish.action";
+import "./dish.css";
 
 const { Option } = Select;
 
@@ -84,12 +83,13 @@ export default function Dish() {
     },
     {
       title: "Danh mục",
-      dataIndex: "categoryName",
-      render: (record) => record.category.name,
+      dataIndex: "category",
+      render: (record) => record.name,
     },
     {
       title: "Giá",
       dataIndex: "price",
+      render: (record) => formatMoney(record),
     },
     {
       title: "Hành động",
@@ -141,8 +141,8 @@ export default function Dish() {
   useEffect(() => {
     form.setFieldsValue({
       name: state.dish.item.name,
-      categoryId: state.dish.item?.category?.id,
-      price: state.dish.price,
+      categoryId: state.dish.item?.categoryId,
+      price: state.dish.item.price,
     });
 
     if (state.dish.item.id) {
@@ -213,15 +213,12 @@ export default function Dish() {
     switch (mode) {
       case "CREATE":
         dispatch(
-          createDish(
-            { ...values, description: values.description.toHTML() },
-            () => {
-              setVisible(false);
-              setFileList([]);
-              form.resetFields();
-              dispatch(listDish({ page }));
-            }
-          )
+          createDish({ ...values }, () => {
+            setVisible(false);
+            setFileList([]);
+            form.resetFields();
+            dispatch(listDish({ page }));
+          })
         );
         break;
       case "UPDATE":
@@ -229,16 +226,12 @@ export default function Dish() {
           values.images = { fileList };
         }
         dispatch(
-          updateDish(
-            id,
-            { ...values, description: values.description.toHTML() },
-            () => {
-              setVisible(false);
-              setFileList([]);
-              form.resetFields();
-              dispatch(listDish({ page }));
-            }
-          )
+          updateDish(id, { ...values }, () => {
+            setVisible(false);
+            setFileList([]);
+            form.resetFields();
+            dispatch(listDish({ page }));
+          })
         );
         break;
       default:
@@ -251,14 +244,6 @@ export default function Dish() {
   };
 
   const handleChange = ({ fileList }) => setFileList(fileList);
-
-  function onChangeCategory(value) {
-    console.log(`selected ${value}`);
-  }
-
-  function onSearch(val) {
-    console.log("search:", val);
-  }
 
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
@@ -324,8 +309,6 @@ export default function Dish() {
                   showSearch
                   placeholder="Chọn danh mục"
                   optionFilterProp="children"
-                  onChange={onChangeCategory}
-                  onSearch={onSearch}
                   filterOption={(input, option) =>
                     option.children
                       .toLowerCase()
@@ -334,32 +317,6 @@ export default function Dish() {
                 >
                   {state.category.items?.length
                     ? state.category.items.map((item) => (
-                        <Option value={item.id}>{item.name}</Option>
-                      ))
-                    : []}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Hãng"
-                name="branchId"
-                rules={[{ required: true, message: "Vui lòng chọn hãng" }]}
-              >
-                <Select
-                  showSearch
-                  placeholder="Chọn hãng"
-                  optionFilterProp="children"
-                  onChange={onChangeCategory}
-                  onSearch={onSearch}
-                  filterOption={(input, option) =>
-                    option.children
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) >= 0
-                  }
-                >
-                  {state.branch.items?.length
-                    ? state.branch.items.map((item) => (
                         <Option value={item.id}>{item.name}</Option>
                       ))
                     : []}
@@ -376,6 +333,11 @@ export default function Dish() {
                 ]}
               >
                 <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="Đơn giá" name="price">
+                <InputNumber />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -400,7 +362,7 @@ export default function Dish() {
                   onChange={handleChange}
                   preview
                 >
-                  {fileList?.length >= 8 ? null : (
+                  {fileList?.length >= 1 ? null : (
                     <div>
                       <PlusOutlined />
                       <div style={{ marginTop: 8 }}>Upload</div>
@@ -421,224 +383,8 @@ export default function Dish() {
                 />
               </Modal>
             </Col>
-            <Col span={24}>
-              <Form.Item
-                label="Mô tả đầy đủ"
-                name="description"
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 20 }}
-              >
-                <BraftEditor
-                  language={"vi-vn"}
-                  className="my-editor"
-                  controls={controls}
-                  placeholder="Nhập mô tả"
-                />
-              </Form.Item>
-            </Col>
           </Row>
 
-          <Row gutter={[16, 16]}>
-            <Col span={24}>
-              <Form.Item
-                label="Phiên bản"
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 20 }}
-                required={true}
-              >
-                <Form.List name="productVersions">
-                  {(fields, { add, remove }) => (
-                    <>
-                      {fields.map(({ key, name, ...restField }) => (
-                        <Space
-                          key={key}
-                          style={{ display: "flex", marginBottom: 8 }}
-                          align="baseline"
-                        >
-                          <Form.Item
-                            label="Bộ nhớ"
-                            name={[name, "storageId"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Vui lòng chọn bộ nhớ",
-                              },
-                            ]}
-                          >
-                            <Select
-                              showSearch
-                              placeholder="Chọn bộ nhớ"
-                              optionFilterProp="children"
-                              onChange={onChangeCategory}
-                              onSearch={onSearch}
-                              filterOption={(input, option) =>
-                                option.children
-                                  .toLowerCase()
-                                  .indexOf(input.toLowerCase()) >= 0
-                              }
-                            >
-                              {state.storage.items?.length
-                                ? state.storage.items.map((item) => (
-                                    <Option value={item.id}>{item.name}</Option>
-                                  ))
-                                : []}
-                            </Select>
-                          </Form.Item>
-                          <Form.Item
-                            label="Màu sắc"
-                            name={[name, "colorId"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Vui lòng chọn màu sắc",
-                              },
-                            ]}
-                          >
-                            <Select
-                              showSearch
-                              placeholder="Chọn màu sắc"
-                              optionFilterProp="children"
-                              onChange={onChangeCategory}
-                              onSearch={onSearch}
-                              filterOption={(input, option) =>
-                                option.children
-                                  .toLowerCase()
-                                  .indexOf(input.toLowerCase()) >= 0
-                              }
-                            >
-                              {state.color.items?.length
-                                ? state.color.items.map((item) => (
-                                    <Option value={item.id}>{item.name}</Option>
-                                  ))
-                                : []}
-                            </Select>
-                          </Form.Item>
-                          <Form.Item
-                            label="Giá gốc"
-                            name={[name, "price"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Vui lòng nhập giá gốc",
-                                type: "number",
-                                min: 1,
-                              },
-                            ]}
-                          >
-                            <InputNumber placeholder="Giá gốc" />
-                          </Form.Item>
-                          <Form.Item
-                            label="Giá bán thực tế"
-                            name={[name, "salePrice"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Vui lòng nhập giá thực tế",
-                                type: "number",
-                                min: 1,
-                              },
-                            ]}
-                          >
-                            <InputNumber wr placeholder="Giá thực tế" />
-                          </Form.Item>
-                          <Form.Item
-                            label="Số lượng trong kho"
-                            name={[name, "quantity"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Vui lòng nhập số lượng",
-                                type: "number",
-                                min: 1,
-                              },
-                            ]}
-                          >
-                            <InputNumber placeholder="Số lượng" />
-                          </Form.Item>
-                          <MinusCircleOutlined onClick={() => remove(name)} />
-                        </Space>
-                      ))}
-                      <Form.Item>
-                        <Button
-                          type="dashed"
-                          onClick={() => add()}
-                          block
-                          icon={<PlusOutlined />}
-                        >
-                          Thêm phiên bản
-                        </Button>
-                      </Form.Item>
-                    </>
-                  )}
-                </Form.List>
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                label="Thông số kỹ thuật"
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 20 }}
-                required={true}
-              >
-                <Form.List name="specificationDetails">
-                  {(fields, { add, remove }) => (
-                    <>
-                      {fields.map(({ key, name, ...restField }) => (
-                        <Space
-                          key={key}
-                          style={{ display: "flex", marginBottom: 8 }}
-                          align="baseline"
-                        >
-                          <Form.Item
-                            name={[name, "specificationId"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Vui lòng chọn thông số",
-                              },
-                            ]}
-                          >
-                            <Select
-                              showSearch
-                              placeholder="Chọn thông số"
-                              optionFilterProp="children"
-                              onChange={onChangeCategory}
-                              onSearch={onSearch}
-                              filterOption={(input, option) =>
-                                option.children
-                                  .toLowerCase()
-                                  .indexOf(input.toLowerCase()) >= 0
-                              }
-                            >
-                              {state.specification.items?.length
-                                ? state.specification.items.map((item) => (
-                                    <Option value={item.id}>{item.name}</Option>
-                                  ))
-                                : []}
-                            </Select>
-                          </Form.Item>
-                          <Form.Item name={[name, "content"]}>
-                            <Input placeholder="Giá trị" />
-                          </Form.Item>
-                          <MinusCircleOutlined onClick={() => remove(name)} />
-                        </Space>
-                      ))}
-                      <Form.Item>
-                        <Button
-                          type="dashed"
-                          onClick={() => add()}
-                          block
-                          icon={<PlusOutlined />}
-                        >
-                          Thêm thông số
-                        </Button>
-                      </Form.Item>
-                    </>
-                  )}
-                </Form.List>
-              </Form.Item>
-            </Col>
-          </Row>
           <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
             <Button type="primary" htmlType="submit">
               {showLableButton(mode)}
@@ -664,18 +410,17 @@ export default function Dish() {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Hãng" name="branchId">
-                {state.dish.item?.branch?.name}
-              </Form.Item>
-            </Col>
-
-            <Col span={12}>
               <Form.Item label="Tên món ăn" name="name">
                 {state.dish.item?.name}
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Mô tả ngắn" name="shortDescription">
+              <Form.Item label="Đơn giá" name="price">
+                {state.dish.item?.shortDescription}
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="Mô tả ngắn" name="description">
                 {state.dish.item?.shortDescription}
               </Form.Item>
             </Col>
@@ -707,61 +452,6 @@ export default function Dish() {
                   src={previewImage}
                 />
               </Modal>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                label="Mô tả đầy đủ"
-                name="description"
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 20 }}
-              >
-                {parse(state.dish.item?.description || "")}
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={[16, 16]}>
-            <Col span={24}>
-              <Form.Item
-                label="Phiên bản"
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 20 }}
-                required={true}
-              >
-                <Tabs defaultActiveKey="0">
-                  {state.dish.item?.productVersions?.map((e, i) => (
-                    <Tabs.TabPane
-                      tab={`${e.storage.name} - ${e.color.name}`}
-                      key={i.toString()}
-                    >
-                      {`Giá gốc: ${formatMoney(
-                        e?.price
-                      )} - Giá sale: ${formatMoney(e.salePrice)} - SL còn: ${
-                        e.quantity
-                      } chiếc`}
-                    </Tabs.TabPane>
-                  ))}
-                </Tabs>
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                label="Thông số kỹ thuật"
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 20 }}
-                required={true}
-              >
-                <Row gutter={[16, 16]}>
-                  <Col span={6}>Thông số</Col>
-                  <Col span={6}>Giá trị</Col>
-                </Row>
-                {state.dish.item?.specifications?.map((e) => (
-                  <Row gutter={[16, 16]}>
-                    <Col span={6}>{e.name}</Col>
-                    <Col span={6}>{e.content}</Col>
-                  </Row>
-                ))}
-              </Form.Item>
             </Col>
           </Row>
         </Form>

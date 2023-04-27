@@ -4,7 +4,7 @@ import PrivateRouter from "./containers/PrivateRouter";
 import Floor from "./pages/Floor";
 import Category from "./pages/Category";
 import Table from "./pages/Table";
-import Coupon from "./pages/Coupon";
+import Customer from "./pages/Customer";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Order from "./pages/Order";
@@ -41,7 +41,7 @@ const routes = [
   },
   {
     path: Endpoint.COUPON,
-    element: <PrivateRouter component={Coupon} />,
+    element: <PrivateRouter component={Customer} />,
   },
   {
     path: Endpoint.STORAGE,

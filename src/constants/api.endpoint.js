@@ -6,7 +6,7 @@ export const APIEnum = {
   FLOOR: "/floors",
   CATEGORY: "/categories",
   TABLE: "/tables",
-  COUPON: "/coupon",
+  CUSTOMER: "/customers",
   STORAGE: "/storage",
   SPECIFICATION: "/specification",
   SETTING: "/setting",

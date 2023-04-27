@@ -1,5 +1,0 @@
-export const LIST_COUPON = "LIST_COUPON";
-export const CREATE_COUPON = "CREATE_COUPON";
-export const DETAIL_COUPON = "DETAIL_COUPON";
-export const DELETE_COUPON = "DELETE_COUPON";
-export const UPDATE_COUPON = "UPDATE_COUPON";

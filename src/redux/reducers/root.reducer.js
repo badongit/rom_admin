@@ -3,7 +3,7 @@ import authReducer from "./auth.reducer";
 import floorReducer from "./floor.reducer";
 import categoryReducer from "./category.reducer";
 import tableReducer from "./table.reducer";
-import couponReducer from "./coupon.reducer";
+import customerReducer from "./customer.reducer";
 import dashboardReducer from "./dashboard.reducer";
 import orderReducer from "./order.reducer";
 import dishReducer from "./dish.reducer";
@@ -17,7 +17,7 @@ const rootReducer = combineReducers({
   floor: floorReducer,
   category: categoryReducer,
   table: tableReducer,
-  coupon: couponReducer,
+  customer: customerReducer,
   storage: storageReducer,
   specification: specificationReducer,
   setting: settingReducer,

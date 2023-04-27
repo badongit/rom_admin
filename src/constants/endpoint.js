@@ -5,7 +5,7 @@ export const Endpoint = {
   SETTING: "/setting",
   CATEGORY: "/category",
   TABLE: "/table",
-  COUPON: "/coupon",
+  CUSTOMER: "/customer",
   STORAGE: "/storage",
   SPECIFICATION: "/specification",
   DISH: "/dish",
@@ -31,8 +31,8 @@ export const routers = [
     text: "Quản lý danh mục",
   },
   {
-    endpoint: Endpoint.PRODUCT,
-    text: "Quản lý sản phẩm",
+    endpoint: Endpoint.DISH,
+    text: "Quản lý món ăn",
   },
 
   {
@@ -44,8 +44,8 @@ export const routers = [
     text: "Quản lý thông số",
   },
   {
-    endpoint: Endpoint.COUPON,
-    text: "Quản lý mã giảm giá",
+    endpoint: Endpoint.CUSTOMER,
+    text: "Quản lý khách hàng",
   },
   {
     endpoint: Endpoint.USER,

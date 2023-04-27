@@ -9,12 +9,12 @@ import {
 } from "../../service/coupon.service";
 import * as types from "../constants";
 
-export const listCoupon = (query) => {
+export const listCustomer = (query) => {
   return async (dispatch) => {
     try {
       const response = await list(query);
       dispatch({
-        type: types.LIST_COUPON,
+        type: types.LIST_CUSTOMER,
         data: response.data,
       });
     } catch (error) {
@@ -27,7 +27,7 @@ export const listCoupon = (query) => {
   };
 };
 
-export const createCoupon = (data, cb) => {
+export const createCustomer = (data, cb) => {
   return async (dispatch) => {
     try {
       const response = await create(data);
@@ -54,7 +54,7 @@ export const createCoupon = (data, cb) => {
   };
 };
 
-export const updateCoupon = (id, data, cb) => {
+export const updateCustomer = (id, data, cb) => {
   return async (dispatch) => {
     try {
       const response = await update(id, data);
@@ -81,7 +81,7 @@ export const updateCoupon = (id, data, cb) => {
   };
 };
 
-export const confirmCoupon = (id, cb) => {
+export const confirmCustomer = (id, cb) => {
   return async (dispatch) => {
     try {
       const response = await confirm(id);
@@ -108,7 +108,7 @@ export const confirmCoupon = (id, cb) => {
   };
 };
 
-export const deleteCoupon = (id, cb) => {
+export const deleteCustomer = (id, cb) => {
   return async (dispatch) => {
     try {
       const response = await remove(id);
@@ -135,12 +135,12 @@ export const deleteCoupon = (id, cb) => {
   };
 };
 
-export const detailCoupon = (id) => {
+export const detailCustomer = (id) => {
   return async (dispatch) => {
     try {
       const response = await detail(id);
       dispatch({
-        type: types.DETAIL_COUPON,
+        type: types.DETAIL_CUSTOMER,
         data: response.data,
       });
     } catch (error) {

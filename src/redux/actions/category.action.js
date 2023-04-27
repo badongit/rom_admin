@@ -57,10 +57,6 @@ export const createCategory = (data, cb) => {
 };
 
 export const updateCategory = (id, data, cb) => {
-  console.log(
-    "🚀 ~ file: category.action.js:60 ~ updateCategory ~ data:",
-    data
-  );
   return async (dispatch) => {
     try {
       const form = new FormData();

@@ -10,7 +10,7 @@ export const create = (data) =>
     },
   });
 export const update = (id, data) =>
-  axios.put(`${APIEnum.DISH}/${id}`, data, {
+  axios.patch(`${APIEnum.DISH}/${id}`, data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

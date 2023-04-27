@@ -13,13 +13,13 @@ import {
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  confirmCoupon,
-  createCoupon,
-  deleteCoupon,
-  detailCoupon,
-  listCoupon,
-  updateCoupon,
-} from "../../redux/actions/coupon.action";
+  confirmCustomer,
+  createCustomer,
+  deleteCustomer,
+  detailCustomer,
+  listCustomer,
+  updateCustomer,
+} from "../../redux/actions/customer.action";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -28,7 +28,7 @@ import {
 import { formatTime } from "../../common/common";
 import { CouponStatusEnum } from "./coupon-status.constant";
 
-export default function Coupon() {
+export default function Customer() {
   const [visible, setVisible] = useState(false);
   const [page, setPage] = useState(1);
   const [mode, setMode] = useState();
@@ -38,7 +38,7 @@ export default function Coupon() {
   const state = useSelector((state) => state.coupon);
 
   useEffect(() => {
-    dispatch(listCoupon({ page }));
+    dispatch(listCustomer({ page }));
   }, [dispatch, page]);
 
   const columns = [
@@ -83,7 +83,9 @@ export default function Coupon() {
               title="Bạn có muốn xoá bản ghi này?"
               onConfirm={() =>
                 dispatch(
-                  deleteCoupon(item.id, () => dispatch(listCoupon({ page })))
+                  deleteCustomer(item.id, () =>
+                    dispatch(listCustomer({ page }))
+                  )
                 )
               }
               okText="Có"
@@ -124,7 +126,7 @@ export default function Coupon() {
     },
   ];
   const handleConfirmCoupon = (item) => {
-    dispatch(confirmCoupon(item.id, () => dispatch(listCoupon({ page }))));
+    dispatch(confirmCustomer(item.id, () => dispatch(listCustomer({ page }))));
   };
   const onChange = (page) => {
     setPage(page);
@@ -148,7 +150,7 @@ export default function Coupon() {
     setId(id);
     setMode("UPDATE");
     setVisible(true);
-    dispatch(detailCoupon(id));
+    dispatch(detailCustomer(id));
   };
 
   const showTitle = (mode) => {
@@ -181,11 +183,13 @@ export default function Coupon() {
   const onFinish = (values) => {
     switch (mode) {
       case "CREATE":
-        dispatch(createCoupon(values, () => dispatch(listCoupon({ page }))));
+        dispatch(
+          createCustomer(values, () => dispatch(listCustomer({ page })))
+        );
         break;
       case "UPDATE":
         dispatch(
-          updateCoupon(id, values, () => dispatch(listCoupon({ page })))
+          updateCustomer(id, values, () => dispatch(listCustomer({ page })))
         );
         break;
       default:

@@ -2,7 +2,7 @@ export * from "./auth.constants";
 export * from "./floor.constants";
 export * from "./category.constants";
 export * from "./table.constants";
-export * from "./coupon.constants";
+export * from "./customer.constants";
 export * from "./storage.constants";
 export * from "./specification.constants";
 export * from "./setting.constants";

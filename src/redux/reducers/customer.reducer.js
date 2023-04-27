@@ -6,19 +6,19 @@ const initialState = {
   item: {},
 };
 
-const couponReducer = (state = initialState, action) => {
+const customerReducer = (state = initialState, action) => {
   switch (action.type) {
-    case types.LIST_COUPON:
+    case types.LIST_CUSTOMER:
       return {
         ...state,
         items: action.data.items,
         meta: action.data.meta,
       };
-    case types.CREATE_COUPON:
-    case types.DELETE_COUPON:
-    case types.UPDATE_COUPON:
+    case types.CREATE_CUSTOMER:
+    case types.DELETE_CUSTOMER:
+    case types.UPDATE_CUSTOMER:
       return state;
-    case types.DETAIL_COUPON:
+    case types.DETAIL_CUSTOMER:
       return {
         ...state,
         item: action.data,
@@ -28,4 +28,4 @@ const couponReducer = (state = initialState, action) => {
   }
 };
 
-export default couponReducer;
+export default customerReducer;

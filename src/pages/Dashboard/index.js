@@ -319,7 +319,7 @@ export default function Dashboard() {
             <h2>Sản phẩm xem nhiều</h2>
             <Table
               columns={columns}
-              dataSource={state.product.items}
+              dataSource={state.dish.items}
               pagination={false}
             />
           </Col>
@@ -327,7 +327,7 @@ export default function Dashboard() {
             <h2>Sản phẩm bán chạy</h2>
             <Table
               columns={columns1}
-              dataSource={state.product.productSells}
+              dataSource={state.dish.productSells}
               pagination={false}
             />
           </Col>
