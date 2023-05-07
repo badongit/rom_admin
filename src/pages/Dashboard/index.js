@@ -128,45 +128,20 @@ export default function Dashboard() {
     refreshData1();
   }, [from1, to1]);
 
-  const labels = state.dashboard?.orders?.map((e) => e.date);
   const labels1 = state.dashboard?.orderMoneys?.map((e) => e.date);
 
   const data = {
-    labels,
+    labels: ["Hoàn thành", "Hủy"],
     datasets: [
       {
-        label: "Chờ xác nhận",
-        data: state.dashboard?.orders?.map((e) => e?.count?.WAITING_CONFIRM),
-        borderColor: "#f1c40f",
-        backgroundColor: "#f1c40f",
-      },
-      {
-        label: "Đã xác nhận",
-        data: state.dashboard?.orders?.map((e) => e?.count?.CONFIRMED),
-        borderColor: "#3498db",
-        backgroundColor: "#3498db",
-      },
-      {
-        label: "Đang giao hàng",
-        data: state.dashboard?.orders?.map((e) => e?.count?.SHIPPING),
-        borderColor: "#f39c12",
-        backgroundColor: "#f39c12",
-      },
-      {
-        label: "Đã nhận",
-        data: state.dashboard?.orders?.map((e) => e?.count?.RECEIVED),
-        borderColor: "#8e44ad",
-        backgroundColor: "#8e44ad",
-      },
-      {
         label: "Hoàn thành",
-        data: state.dashboard?.orders?.map((e) => e?.count?.SUCCESS),
+        data: [1, 3],
         borderColor: "#2ecc71",
         backgroundColor: "#2ecc71",
       },
       {
         label: "Đã huỷ",
-        data: state.dashboard?.orders?.map((e) => e?.count?.REJECT),
+        data: [4, 5],
         borderColor: "#e74c3c",
         backgroundColor: "#e74c3c",
       },
@@ -265,9 +240,19 @@ export default function Dashboard() {
           <Col span={6}>
             <Card>
               <Statistic
-                title="Tổng số khách hàng"
-                value={state.dashboard?.summary?.countUser}
+                title="Tổng số nhân viên"
+                value={state.dashboard?.summary?.totalEmployee}
                 valueStyle={{ color: "#3f8600" }}
+                suffix="nhân viên"
+              />
+            </Card>
+          </Col>
+          <Col span={6}>
+            <Card>
+              <Statistic
+                title="Tổng số khách hàng"
+                value={state.dashboard?.summary?.totalCustomer}
+                valueStyle={{ color: "#3498db" }}
                 suffix="khách hàng"
               />
             </Card>
@@ -275,29 +260,20 @@ export default function Dashboard() {
           <Col span={6}>
             <Card>
               <Statistic
-                title="Tổng số đơn hàng hoàn thành"
-                value={state.dashboard?.summary?.countOrder}
-                valueStyle={{ color: "#3498db" }}
-                suffix="đơn"
+                title="Tổng số bàn"
+                value={state.dashboard?.summary?.totalTable}
+                valueStyle={{ color: "#e74c3c" }}
+                suffix="bàn"
               />
             </Card>
           </Col>
           <Col span={6}>
             <Card>
               <Statistic
-                title="Sản phẩm tồn kho"
-                value={state.dashboard?.summary?.stockQuantity}
+                title="Tổng số món ăn"
+                value={state.dashboard?.summary?.totalDish}
                 valueStyle={{ color: "#e74c3c" }}
-                suffix="sản phẩm"
-              />
-            </Card>
-          </Col>
-          <Col span={6}>
-            <Card>
-              <Statistic
-                title="Tổng thu nhập"
-                value={formatMoney(+state.dashboard?.summary?.sumMoney || 0)}
-                valueStyle={{ color: "#e74c3c" }}
+                suffix="món"
               />
             </Card>
           </Col>

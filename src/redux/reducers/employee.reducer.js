@@ -6,19 +6,19 @@ const initialState = {
   item: {},
 };
 
-const specificationReducer = (state = initialState, action) => {
+const employeeReducer = (state = initialState, action) => {
   switch (action.type) {
-    case types.LIST_SPECIFICATION:
+    case types.LIST_EMPLOYEE:
       return {
         ...state,
         items: action.data.items,
         meta: action.data.meta,
       };
-    case types.CREATE_SPECIFICATION:
-    case types.DELETE_SPECIFICATION:
-    case types.UPDATE_SPECIFICATION:
+    case types.CREATE_EMPLOYEE:
+    case types.DELETE_EMPLOYEE:
+    case types.UPDATE_EMPLOYEE:
       return state;
-    case types.DETAIL_SPECIFICATION:
+    case types.DETAIL_EMPLOYEE:
       return {
         ...state,
         item: action.data,
@@ -28,4 +28,4 @@ const specificationReducer = (state = initialState, action) => {
   }
 };
 
-export default specificationReducer;
+export default employeeReducer;

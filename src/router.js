@@ -10,7 +10,7 @@ import Login from "./pages/Login";
 import Order from "./pages/Order";
 import Dish from "./pages/Dish";
 import Setting from "./pages/Setting";
-import Specification from "./pages/Specification";
+import Employee from "./pages/Employee";
 import Storage from "./pages/Storage";
 import User from "./pages/User";
 
@@ -40,7 +40,7 @@ const routes = [
     element: <PrivateRouter component={Table} />,
   },
   {
-    path: Endpoint.COUPON,
+    path: Endpoint.CUSTOMER,
     element: <PrivateRouter component={Customer} />,
   },
   {
@@ -48,8 +48,8 @@ const routes = [
     element: <PrivateRouter component={Storage} />,
   },
   {
-    path: Endpoint.SPECIFICATION,
-    element: <PrivateRouter component={Specification} />,
+    path: Endpoint.EMPLOYEE,
+    element: <PrivateRouter component={Employee} />,
   },
   {
     path: Endpoint.DISH,

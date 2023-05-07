@@ -7,7 +7,7 @@ export const Endpoint = {
   TABLE: "/table",
   CUSTOMER: "/customer",
   STORAGE: "/storage",
-  SPECIFICATION: "/specification",
+  EMPLOYEE: "/employee",
   DISH: "/dish",
   USER: "/user",
   ORDER: "/order",
@@ -40,8 +40,8 @@ export const routers = [
     text: "Quản lý bộ nhớ",
   },
   {
-    endpoint: Endpoint.SPECIFICATION,
-    text: "Quản lý thông số",
+    endpoint: Endpoint.EMPLOYEE,
+    text: "Quản lý nhân viên",
   },
   {
     endpoint: Endpoint.CUSTOMER,

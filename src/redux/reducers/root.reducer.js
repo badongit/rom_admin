@@ -8,8 +8,9 @@ import dashboardReducer from "./dashboard.reducer";
 import orderReducer from "./order.reducer";
 import dishReducer from "./dish.reducer";
 import settingReducer from "./setting.reducer";
-import specificationReducer from "./specification.reducer";
+import employeeReducer from "./employee.reducer";
 import storageReducer from "./storage.reducer";
+import roleReducer from "./role.reducer";
 import userReducer from "./user.reducer";
 
 const rootReducer = combineReducers({
@@ -19,7 +20,8 @@ const rootReducer = combineReducers({
   table: tableReducer,
   customer: customerReducer,
   storage: storageReducer,
-  specification: specificationReducer,
+  employee: employeeReducer,
+  role: roleReducer,
   setting: settingReducer,
   dish: dishReducer,
   user: userReducer,

@@ -9,33 +9,36 @@ import {
   Input,
   Pagination,
   Popconfirm,
+  InputNumber,
   Select,
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  createTable,
-  deleteTable,
-  detailTable,
-  listTable,
-  updateTable,
-} from "../../redux/actions/table.action";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Option } from "antd/lib/mentions";
-import { listFloor } from "../../redux/actions/floor.action";
+  createEmployee,
+  deleteEmployee,
+  detailEmployee,
+  listEmployee,
+  updateEmployee,
+} from "../../redux/actions/employee.action";
+import { listRole } from "../../redux/actions/role.action";
+import { DeleteOutlined, EditOutlined, RedoOutlined } from "@ant-design/icons";
+import { formatDate, formatMoney } from "../../common/common";
 
-export default function Color() {
+const { Option } = Select;
+
+export default function Specification() {
   const [visible, setVisible] = useState(false);
   const [page, setPage] = useState(1);
   const [mode, setMode] = useState();
   const [id, setId] = useState();
-
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-  const state = useSelector((state) => state);
+  const stateEmployee = useSelector((state) => state.employee);
+  const stateRole = useSelector((state) => state.role);
 
   useEffect(() => {
-    dispatch(listTable({ page }));
-    dispatch(listFloor({ page: 1 }));
+    dispatch(listEmployee({ page }));
+    dispatch(listRole({ page }));
   }, [dispatch, page]);
 
   const columns = [
@@ -44,17 +47,36 @@ export default function Color() {
       dataIndex: "id",
     },
     {
-      title: "Mã bàn",
+      title: "Mã nhân viên",
       dataIndex: "code",
     },
     {
-      title: "Tầng",
-      dataIndex: "floor",
-      render: (record) => record?.name,
+      title: "Tên nhân viên",
+      dataIndex: "name",
     },
     {
-      title: "Số người tối đa",
-      dataIndex: "maxPeople",
+      title: "Số điện thoại",
+      dataIndex: "phoneNumber",
+    },
+    {
+      title: "Vai trò",
+      dataIndex: "role",
+      render: (record) => record.name,
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+      render: (record) => EmployeeStatusText[record],
+    },
+    {
+      title: "Lương",
+      dataIndex: "salary",
+      render: (record) => formatMoney(record),
+    },
+    {
+      title: "Ngày vào",
+      dataIndex: "dateJoin",
+      render: (record) => formatDate(record),
     },
     {
       title: "Hành động",
@@ -67,7 +89,9 @@ export default function Color() {
               title="Bạn có muốn xoá bản ghi này?"
               onConfirm={() =>
                 dispatch(
-                  deleteTable(item.id, () => dispatch(listTable({ page })))
+                  deleteEmployee(item.id, () =>
+                    dispatch(listEmployee({ page }))
+                  )
                 )
               }
               okText="Có"
@@ -83,9 +107,29 @@ export default function Color() {
             <EditOutlined
               style={{
                 cursor: "pointer",
+                paddingRight: 10,
               }}
               onClick={() => showModalUpdate(item.id)}
             />
+            <Popconfirm
+              title="Bạn có muốn đặt lại mật khẩu cho tài khoản này khống?"
+              onConfirm={() =>
+                dispatch(
+                  updateEmployee(item.id, { password: "hadilao123" }, () =>
+                    dispatch(listEmployee({ page }))
+                  )
+                )
+              }
+              okText="Có"
+              cancelText="Không"
+            >
+              <RedoOutlined
+                style={{
+                  cursor: "pointer",
+                  paddingRight: 10,
+                }}
+              />
+            </Popconfirm>
           </>
         );
       },
@@ -96,21 +140,15 @@ export default function Color() {
     setPage(page);
   };
 
-  function onChangeFloor(value) {
-    console.log(`selected ${value}`);
-  }
-
-  function onSearch(val) {
-    console.log("search:", val);
-  }
-
   useEffect(() => {
     form.setFieldsValue({
-      code: state.table.item.code,
-      maxPeople: state.table.item.maxPeople,
-      floorId: state.table.item.floorId,
+      name: stateEmployee.item.name,
+      code: stateEmployee.item.code,
+      phoneNumber: stateEmployee.item.phoneNumber,
+      roleId: stateEmployee.item.roleId,
+      salary: stateEmployee.item.salary,
     });
-  }, [form, state.table]);
+  }, [form, stateEmployee.item]);
 
   const showModal = () => {
     form.resetFields();
@@ -122,15 +160,15 @@ export default function Color() {
     setId(id);
     setMode("UPDATE");
     setVisible(true);
-    dispatch(detailTable(id));
+    dispatch(detailEmployee(id));
   };
 
   const showTitle = (mode) => {
     switch (mode) {
       case "CREATE":
-        return "Tạo mới bàn";
+        return "Tạo mới nhân viên";
       case "UPDATE":
-        return "Cập nhật bàn";
+        return "Cập nhật nhân viên";
       default:
         break;
     }
@@ -153,13 +191,16 @@ export default function Color() {
   };
 
   const onFinish = (values) => {
-    console.log("🚀 ~ file: index.js:154 ~ onFinish ~ values:", values);
     switch (mode) {
       case "CREATE":
-        dispatch(createTable(values, () => dispatch(listTable({ page }))));
+        dispatch(
+          createEmployee(values, () => dispatch(listEmployee({ page })))
+        );
         break;
       case "UPDATE":
-        dispatch(updateTable(id, values, () => dispatch(listTable({ page }))));
+        dispatch(
+          updateEmployee(id, values, () => dispatch(listEmployee({ page })))
+        );
         break;
       default:
         break;
@@ -175,7 +216,7 @@ export default function Color() {
 
   return (
     <MainLayout>
-      <h2>Danh sách bàn</h2>
+      <h2>Danh sách nhân viên</h2>
       <Space style={{ marginBottom: 20 }}>
         <Button type="primary" onClick={showModal}>
           Tạo mới
@@ -184,8 +225,6 @@ export default function Color() {
       <Modal
         title={showTitle(mode)}
         visible={visible}
-        // onOk={handleOk}
-        // confirmLoading={confirmLoading}
         onCancel={handleCancel}
         footer={false}
       >
@@ -199,43 +238,60 @@ export default function Color() {
           form={form}
         >
           <Form.Item
-            label="Mã bàn"
+            label="Mã nhân viên"
             name="code"
-            rules={[{ required: true, message: "Vui lòng nhập tên bàn" }]}
+            rules={[{ required: true, message: "Vui lòng nhập mã nhân viên" }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            label="Số người tối đa"
-            name="maxPeople"
-            rules={[
-              { required: true, message: "Vui lòng nhập số người tối đa" },
-            ]}
+            label="Tên nhân viên"
+            name="name"
+            rules={[{ required: true, message: "Vui lòng nhập tên nhân viên" }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            label="Tầng"
-            name="floorId"
-            rules={[{ required: true, message: "Vui lòng chọn tầng" }]}
+            label="Số điện thoại"
+            name="phoneNumber"
+            rules={[{ required: true, message: "Vui lòng nhập số điện thoại" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Vai trò"
+            name="roleId"
+            rules={[{ required: true, message: "Vui lòng chọn vai trò" }]}
           >
             <Select
               showSearch
-              placeholder="Chọn tầng"
+              placeholder="Chọn vai trò"
               optionFilterProp="children"
-              onChange={onChangeFloor}
-              onSearch={onSearch}
               filterOption={(input, option) =>
                 option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }
             >
-              {state.floor.items?.length
-                ? state.floor.items.map((item) => (
+              {stateRole.items?.length
+                ? stateRole.items.map((item) => (
                     <Option value={item.id}>{item.name}</Option>
                   ))
                 : []}
             </Select>
           </Form.Item>
+          <Form.Item
+            label="Lương"
+            name="salary"
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng nhập lương",
+                type: "number",
+              },
+            ]}
+          >
+            <InputNumber />
+          </Form.Item>
+
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Button type="primary" htmlType="submit">
               {showLableButton(mode)}
@@ -245,15 +301,17 @@ export default function Color() {
       </Modal>
       <Table
         columns={columns}
-        dataSource={state.table.items}
+        dataSource={stateEmployee.items}
         pagination={false}
       />
       <Pagination
         style={{ marginTop: 10 }}
         current={page}
-        total={state.table.meta.total}
+        total={stateEmployee.meta.total}
         onChange={onChange}
       />
     </MainLayout>
   );
 }
+
+const EmployeeStatusText = ["Hoạt động", "Tạm nghỉ", "Nghỉ việc"];

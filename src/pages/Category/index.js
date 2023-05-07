@@ -111,6 +111,7 @@ export default function Category() {
     form.resetFields();
     setMode("CREATE");
     setVisible(true);
+    setImages([]);
   };
 
   const showModalUpdate = (id) => {

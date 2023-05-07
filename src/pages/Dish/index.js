@@ -17,10 +17,8 @@ import {
   Select,
   Space,
   Table,
-  Tabs,
   Upload,
 } from "antd";
-import parse from "html-react-parser";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { formatMoney, getBase64 } from "../../common/common";

@@ -8,10 +8,11 @@ export const APIEnum = {
   TABLE: "/tables",
   CUSTOMER: "/customers",
   STORAGE: "/storage",
-  SPECIFICATION: "/specification",
+  EMPLOYEE: "/employees",
   SETTING: "/setting",
+  ROLE: "/roles",
   DISH: "/dishes",
   USER: "/user",
   DASHBOARD: "/dashboard",
-  ORDER: "/order",
+  ORDER: "/orders",
 };

@@ -6,7 +6,7 @@ import {
   list,
   remove,
   update,
-} from "../../service/coupon.service";
+} from "../../service/customer.service";
 import * as types from "../constants";
 
 export const listCustomer = (query) => {

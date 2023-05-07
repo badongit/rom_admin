@@ -25,6 +25,10 @@ import {
 import { OrderStatus, OrderStatusEnum } from "./order-status.const";
 import { useReactToPrint } from "react-to-print";
 
+const OrderTypeText = ["Tại quán", "Mang đi"];
+const PaymentMethodText = ["Tiền mặt", "Chuyển khoản"];
+const OrderStatusText = ["Chờ xác nhận", "Đang thực hiện", "Hoàn thành", "Hủy"];
+
 export default function Order() {
   const [visible, setVisible] = useState(false);
   const [page, setPage] = useState(1);
@@ -33,7 +37,7 @@ export default function Order() {
   const state = useSelector((state) => state);
 
   useEffect(() => {
-    dispatch(listOrder({ page }));
+    dispatch(listOrder({ page, isGetDetails: 1, status: [2, 3].join(",") }));
   }, [dispatch, page]);
 
   const columns = [
@@ -42,43 +46,39 @@ export default function Order() {
       dataIndex: "id",
     },
     {
-      title: "Người mua",
-      dataIndex: "user",
-      render: (record) => record.fullname,
+      title: "Mã đơn hàng",
+      dataIndex: "code",
     },
     {
-      title: "Số điện thoại",
-      dataIndex: "phone",
+      title: "Loại đơn hàng",
+      dataIndex: "type",
+      render: (record) => OrderTypeText[record],
     },
     {
-      title: "Địa chỉ",
-      dataIndex: "address",
+      title: "Khách hàng",
+      dataIndex: "customer",
+      render: (record) => record?.name || record?.phoneNumber || "",
+    },
+    {
+      title: "PTTT",
+      dataIndex: "paymentMethod",
+      render: (record) => PaymentMethodText[record],
+    },
+
+    {
+      title: "Thanh toán",
+      dataIndex: "paymentReality",
+      render: (record) => (record ? formatMoney(record) : ""),
+    },
+    {
+      title: "Thu ngân",
+      dataIndex: "cashier",
+      render: (record) => record?.name,
     },
     {
       title: "Trạng thái",
       dataIndex: "status",
-      render: (record) => OrderStatus[record],
-    },
-    {
-      title: "Tổng giá trị",
-      render: (record) => {
-        const totalMoney = record.orderDetails.reduce((total, item) => {
-          return (
-            total +
-            (item?.orderPrice || item?.salePrice || item?.price) * item.quantity
-          );
-        }, 0);
-        return formatMoney(
-          (totalMoney * (100 - record.coupon.value || 0)) / 100
-        );
-      },
-    },
-    {
-      title: "Tổng số lượng",
-      render: (record) =>
-        `${record.orderDetails.reduce((total, item) => {
-          return total + item.quantity;
-        }, 0)} sản phẩm`,
+      render: (record) => OrderStatusText[record],
     },
     {
       title: "Ngày tạo",
@@ -99,45 +99,6 @@ export default function Order() {
               }}
               onClick={() => showModalDetail(item?.id)}
             />
-            {item.status !== OrderStatusEnum.SUCCESS &&
-            item.status !== OrderStatusEnum.REJECT ? (
-              <Popconfirm
-                title="Bạn có muốn thay đổi trạng thái?"
-                onConfirm={() => handleChangeStatus(item, false)}
-                okText="Có"
-                cancelText="Không"
-              >
-                <CheckSquareOutlined
-                  style={{
-                    cursor: "pointer",
-                    paddingRight: 10,
-                  }}
-                />
-              </Popconfirm>
-            ) : (
-              <></>
-            )}
-            {[
-              OrderStatusEnum.WAITING_CONFIRM,
-              OrderStatusEnum.CONFIRMED,
-              OrderStatusEnum.SHIPPING,
-            ].includes(item.status) ? (
-              <Popconfirm
-                title="Bạn có muốn huỷ đơn hàng?"
-                onConfirm={() => handleChangeStatus(item, true)}
-                okText="Có"
-                cancelText="Không"
-              >
-                <MinusCircleOutlined
-                  style={{
-                    cursor: "pointer",
-                    paddingRight: 10,
-                  }}
-                />
-              </Popconfirm>
-            ) : (
-              <></>
-            )}
           </>
         );
       },
@@ -146,23 +107,28 @@ export default function Order() {
 
   const columnsDetail = [
     {
-      title: "Mã sản phẩm",
-      dataIndex: "productId",
+      title: "Mã món ăn",
+      dataIndex: "dishId",
     },
     {
-      title: "Tên sản phẩm",
-      dataIndex: "productName",
+      title: "Tên món ăn",
+      dataIndex: "dish",
+      render: (record) => record.name,
     },
     {
-      title: "Phiên bản",
-
-      render: (record) => `${record.color?.name} - ${record.storage?.name}`,
+      title: "Thời gian gọi",
+      dataIndex: "createdAt",
+      render: (record) => formatTime(record),
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+      render: (record) => OrderStatusText[record],
     },
     {
       title: "Giá",
-
-      render: (record) =>
-        formatMoney(record.orderPrice || record.salePrice || record.price),
+      dataIndex: "price",
+      render: (record) => formatMoney(record),
     },
     {
       title: "Số lượng",
@@ -170,12 +136,7 @@ export default function Order() {
     },
     {
       title: "Thành tiền",
-
-      render: (record) =>
-        formatMoney(
-          (record.orderPrice || record.salePrice || record.price) *
-            record.quantity
-        ),
+      render: (record) => formatMoney(record.price * record.quantity),
     },
   ];
 
@@ -279,36 +240,76 @@ export default function Order() {
                     marginBottom: 0,
                   }}
                 >
-                  <b>cellPhoneS</b>
+                  <b>Hadilao</b>
                 </Form.Item>
                 <Form.Item
                   label="Mã đơn hàng"
-                  name="categoryId"
+                  name="code"
                   style={{
                     marginBottom: 0,
                   }}
                 >
-                  #{state.order.item?.id}
+                  {state.order.item?.code}
                 </Form.Item>
+                {state.order.item?.table && (
+                  <Form.Item
+                    label="Bàn"
+                    name="status"
+                    style={{
+                      marginBottom: 0,
+                    }}
+                  >
+                    {state.order.item?.table?.code}
+                  </Form.Item>
+                )}
+                {state.order.item?.waitingTicket && (
+                  <Form.Item
+                    label="Phiếu"
+                    name="status"
+                    style={{
+                      marginBottom: 0,
+                    }}
+                  >
+                    {state.order.item?.waitingTicket}
+                  </Form.Item>
+                )}
                 <Form.Item
                   label="Trạng thái đơn hàng"
-                  name="categoryId"
+                  name="status"
                   style={{
                     marginBottom: 0,
                   }}
                 >
-                  {OrderStatus[state.order.item?.status]}
+                  {OrderStatusText[state.order.item?.status]}
+                </Form.Item>
+                <Form.Item
+                  label="Loại thanh toán"
+                  name="status"
+                  style={{
+                    marginBottom: 0,
+                  }}
+                >
+                  {PaymentMethodText[state.order.item?.paymentMethod]}
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item
-                  label="Người mua"
+                  label="Khách hàng"
                   name="name"
                   style={{
                     marginBottom: 0,
                   }}
                 >
-                  {state.order.item?.user?.fullname}
+                  {state.order.item?.customer?.name}
+                </Form.Item>
+                <Form.Item
+                  label="Loại đơn"
+                  name="name"
+                  style={{
+                    marginBottom: 0,
+                  }}
+                >
+                  {OrderTypeText[state.order.item?.type]}
                 </Form.Item>
                 <Form.Item
                   label="Số điện thoại"
@@ -317,28 +318,37 @@ export default function Order() {
                     marginBottom: 0,
                   }}
                 >
-                  {state.order.item?.phone}
+                  {state.order.item?.customer?.phoneNumber}
                 </Form.Item>
                 <Form.Item
-                  label="Địa chỉ"
-                  name="name"
+                  label="Thu ngân"
+                  name="note"
                   style={{
                     marginBottom: 0,
                   }}
                 >
-                  {state.order.item?.address}
+                  {state.order.item?.cashier?.name}
+                </Form.Item>
+                <Form.Item
+                  label="Ghi chú"
+                  name="note"
+                  style={{
+                    marginBottom: 0,
+                  }}
+                >
+                  {state.order.item?.note}
                 </Form.Item>
               </Col>
               <Col span={24}>
                 <h3>Danh sách sản phẩm</h3>
                 <Table
                   columns={columnsDetail}
-                  dataSource={state.order.item.orderDetails}
+                  dataSource={state.order.item.details}
                   pagination={false}
                 />
               </Col>
-              <Col span={12}></Col>
-              <Col span={12}>
+              <Col span={16}></Col>
+              <Col span={8}>
                 <Form.Item
                   label="Tổng số tiền"
                   name="name"
@@ -347,25 +357,20 @@ export default function Order() {
                   }}
                 >
                   {formatMoney(
-                    state.order.item?.orderDetails?.reduce((total, item) => {
-                      return (
-                        total +
-                        (item?.orderPrice || item?.salePrice || item?.price) *
-                          item.quantity
-                      );
+                    state.order.item?.details?.reduce((total, item) => {
+                      if (item.status !== 2) return total;
+                      return total + item?.price * item.quantity;
                     }, 0)
                   )}
                 </Form.Item>
                 <Form.Item
-                  label="Mã giảm giá"
+                  label="Dùng điểm"
                   name="name"
                   style={{
                     marginBottom: 0,
                   }}
                 >
-                  {state.order.item?.coupon?.id
-                    ? `${state.order.item?.coupon?.code} - Giảm ${state.order.item?.coupon?.value}%`
-                    : "Không"}
+                  {state.order.item?.pointUsed + " điểm"}
                 </Form.Item>
                 <Form.Item
                   label="Thanh toán"
@@ -374,17 +379,7 @@ export default function Order() {
                     marginBottom: 0,
                   }}
                 >
-                  {formatMoney(
-                    (state.order.item?.orderDetails?.reduce((total, item) => {
-                      return (
-                        total +
-                        (item?.orderPrice || item?.salePrice || item?.price) *
-                          item.quantity
-                      );
-                    }, 0) *
-                      (100 - state.order.item?.coupon?.value || 0)) /
-                      100
-                  )}
+                  {formatMoney(state.order.item?.paymentReality)}
                 </Form.Item>
               </Col>
             </Row>

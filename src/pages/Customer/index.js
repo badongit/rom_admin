@@ -13,7 +13,6 @@ import {
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  confirmCustomer,
   createCustomer,
   deleteCustomer,
   detailCustomer,
@@ -26,7 +25,6 @@ import {
   CheckSquareOutlined,
 } from "@ant-design/icons";
 import { formatTime } from "../../common/common";
-import { CouponStatusEnum } from "./coupon-status.constant";
 
 export default function Customer() {
   const [visible, setVisible] = useState(false);
@@ -35,7 +33,7 @@ export default function Customer() {
   const [id, setId] = useState();
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-  const state = useSelector((state) => state.coupon);
+  const state = useSelector((state) => state.customer);
 
   useEffect(() => {
     dispatch(listCustomer({ page }));
@@ -47,71 +45,24 @@ export default function Customer() {
       dataIndex: "id",
     },
     {
-      title: "Mã giảm giá",
-      dataIndex: "code",
+      title: "Họ tên",
+      dataIndex: "name",
     },
     {
-      title: "Số lượng",
-      dataIndex: "planQuantity",
+      title: "Số điện thoại",
+      dataIndex: "phoneNumber",
     },
     {
-      title: "Số lượng đã sử dụng",
-      dataIndex: "actualQuantity",
-    },
-    {
-      title: "Giảm (%)",
-      dataIndex: "value",
-    },
-    {
-      title: "Ngày tạo",
-      dataIndex: "createdAt",
-      render: (record) => formatTime(record),
-    },
-    {
-      title: "Ngày cập nhật",
-      dataIndex: "updatedAt",
-      render: (record) => formatTime(record),
+      title: "Điểm tích lũy",
+      dataIndex: "point",
     },
     {
       title: "Hành động",
       dataIndex: "",
       key: "id",
       render: (item) => {
-        return item.status === CouponStatusEnum.WaitingConfirm ? (
+        return (
           <>
-            <Popconfirm
-              title="Bạn có muốn xoá bản ghi này?"
-              onConfirm={() =>
-                dispatch(
-                  deleteCustomer(item.id, () =>
-                    dispatch(listCustomer({ page }))
-                  )
-                )
-              }
-              okText="Có"
-              cancelText="Không"
-            >
-              <DeleteOutlined
-                style={{
-                  cursor: "pointer",
-                  paddingRight: 10,
-                }}
-              />
-            </Popconfirm>
-
-            <Popconfirm
-              title="Bạn có muốn thay đổi trạng thái?"
-              onConfirm={() => handleConfirmCoupon(item)}
-              okText="Có"
-              cancelText="Không"
-            >
-              <CheckSquareOutlined
-                style={{
-                  cursor: "pointer",
-                  paddingRight: 10,
-                }}
-              />
-            </Popconfirm>
             <EditOutlined
               style={{
                 cursor: "pointer",
@@ -119,24 +70,20 @@ export default function Customer() {
               onClick={() => showModalUpdate(item.id)}
             />
           </>
-        ) : (
-          <>Đã xác nhận</>
         );
       },
     },
   ];
-  const handleConfirmCoupon = (item) => {
-    dispatch(confirmCustomer(item.id, () => dispatch(listCustomer({ page }))));
-  };
+
   const onChange = (page) => {
     setPage(page);
   };
 
   useEffect(() => {
     form.setFieldsValue({
-      code: state.item.code,
-      planQuantity: state.item.planQuantity,
-      value: state.item.value,
+      name: state.item.name,
+      phoneNumber: state.item.phoneNumber,
+      point: state.item.point,
     });
   }, [form, state.item]);
 
@@ -206,7 +153,7 @@ export default function Customer() {
 
   return (
     <MainLayout>
-      <h2>Danh sách mã giảm giá</h2>
+      <h2>Danh sách khách hàng</h2>
       <Space style={{ marginBottom: 20 }}>
         <Button type="primary" onClick={showModal}>
           Tạo mới
@@ -230,41 +177,25 @@ export default function Customer() {
           form={form}
         >
           <Form.Item
-            label="Code"
-            name="code"
-            rules={[{ required: true, message: "Vui lòng nhập mã giảm giá" }]}
+            label="Số điện thoại"
+            name="phoneNumber"
+            rules={[
+              {
+                required: true,
+                message: "Số điện thoại không hợp lệ",
+                length: 10,
+              },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            label="Số lượng"
-            name="planQuantity"
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập số lượng",
-                type: "number",
-                min: 1,
-              },
-            ]}
+            label="Họ tên"
+            name="name"
+            rules={[{ required: true, message: "Vui lòng nhập họ tên" }]}
           >
-            <InputNumber />
+            <Input />
           </Form.Item>
-          <Form.Item
-            label="Giá trị (%)"
-            name="value"
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập giá trị",
-                type: "number",
-                min: 0,
-              },
-            ]}
-          >
-            <InputNumber />
-          </Form.Item>
-
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Button type="primary" htmlType="submit">
               {showLableButton(mode)}

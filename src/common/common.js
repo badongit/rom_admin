@@ -1,6 +1,7 @@
 import * as moment from "moment";
 
 export const formatTime = (time) => moment(time).format("DD/MM/YYYY HH:mm");
+export const formatDate = (time) => moment(time).format("DD/MM/YYYY");
 
 export function getBase64(file) {
   return new Promise((resolve, reject) => {
