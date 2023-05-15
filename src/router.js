@@ -1,18 +1,15 @@
 import NotFound from "./components/NotFound";
 import { Endpoint } from "./constants/endpoint";
 import PrivateRouter from "./containers/PrivateRouter";
-import Floor from "./pages/Floor";
 import Category from "./pages/Category";
-import Table from "./pages/Table";
 import Customer from "./pages/Customer";
 import Dashboard from "./pages/Dashboard";
+import Dish from "./pages/Dish";
+import Employee from "./pages/Employee";
+import Floor from "./pages/Floor";
 import Login from "./pages/Login";
 import Order from "./pages/Order";
-import Dish from "./pages/Dish";
-import Setting from "./pages/Setting";
-import Employee from "./pages/Employee";
-import Storage from "./pages/Storage";
-import User from "./pages/User";
+import Table from "./pages/Table";
 
 const routes = [
   {
@@ -28,10 +25,6 @@ const routes = [
     element: <PrivateRouter component={Floor} />,
   },
   {
-    path: Endpoint.SETTING,
-    element: <PrivateRouter component={Setting} />,
-  },
-  {
     path: Endpoint.CATEGORY,
     element: <PrivateRouter component={Category} />,
   },
@@ -44,20 +37,12 @@ const routes = [
     element: <PrivateRouter component={Customer} />,
   },
   {
-    path: Endpoint.STORAGE,
-    element: <PrivateRouter component={Storage} />,
-  },
-  {
     path: Endpoint.EMPLOYEE,
     element: <PrivateRouter component={Employee} />,
   },
   {
     path: Endpoint.DISH,
     element: <PrivateRouter component={Dish} />,
-  },
-  {
-    path: Endpoint.USER,
-    element: <PrivateRouter component={User} />,
   },
   {
     path: Endpoint.ORDER,

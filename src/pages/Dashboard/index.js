@@ -5,19 +5,19 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend,
 } from "chart.js";
-import { Line } from "react-chartjs-2";
+import { Bar, Line } from "react-chartjs-2";
 import { listDish, listDishSell } from "../../redux/actions/dish.action";
 import { useDispatch, useSelector } from "react-redux";
 import {
   dashboardCustomer,
   dashboardOrder,
   dashboardOrderMoney,
+  dashboardRevenue,
   dashboardSummary,
 } from "../../redux/actions/dashboard.action";
 import { formatMoney } from "../../common/common";
@@ -34,8 +34,7 @@ moment.locale("vi");
 ChartJS.register(
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend
@@ -101,6 +100,7 @@ export default function Dashboard() {
     dispatch(dashboardCustomer());
     dispatch(dashboardOrder(params));
     dispatch(dashboardOrderMoney(params1));
+    dispatch(dashboardRevenue(params1));
     dispatch(listDishSell({ page: 1, orderSell: -1, limit: 5 }));
   }, [dispatch]);
 
@@ -109,13 +109,13 @@ export default function Dashboard() {
       startDate: from ? from.toISOString() : "",
       endDate: moment(to).startOf("day").toISOString(),
     };
-    dispatch(dashboardOrder(params));
+    dispatch(dashboardRevenue(params));
   };
 
   const refreshData1 = () => {
     const params = {
       startDate: from1 ? from1.toISOString() : "",
-      endDate: moment(to1).startOf("day").toISOString(),
+      endDate: moment(to1).endOf("day").toISOString(),
     };
     dispatch(dashboardOrderMoney(params));
   };
@@ -131,19 +131,13 @@ export default function Dashboard() {
   const labels1 = state.dashboard?.orderMoneys?.map((e) => e.date);
 
   const data = {
-    labels: ["Hoàn thành", "Hủy"],
+    labels: state.dashboard.revenueStatistic.map((item) => item.time),
     datasets: [
       {
-        label: "Hoàn thành",
-        data: [1, 3],
+        label: "Doanh thu",
+        data: state.dashboard.revenueStatistic.map((item) => item.totalAmount),
         borderColor: "#2ecc71",
         backgroundColor: "#2ecc71",
-      },
-      {
-        label: "Đã huỷ",
-        data: [4, 5],
-        borderColor: "#e74c3c",
-        backgroundColor: "#e74c3c",
       },
     ],
   };
@@ -219,6 +213,8 @@ export default function Dashboard() {
   ];
 
   const handleChangeDate = (start, end) => {
+    console.log("🚀 ~ file: index.js:216 ~ handleChangeDate ~ end:", end);
+    console.log("🚀 ~ file: index.js:216 ~ handleChangeDate ~ start:", start);
     setFrom(start);
     setTo(end);
   };
@@ -280,14 +276,9 @@ export default function Dashboard() {
         </Row>
         <Row gutter={16} style={{ marginTop: 20 }}>
           <Col span={12}>
-            <h2>Thống kê trạng thái đơn hàng</h2>
-            <Line options={options} data={data} />
+            <h2>Thống kê doanh thu</h2>
+            <Bar options={options} data={data} />
             <DateSelection handleChange={handleChangeDate} />
-          </Col>
-          <Col span={12}>
-            <h2>Thống kê thu nhập</h2>
-            <Line options={options1} data={data1} />
-            <DateSelection handleChange={handleChangeDate1} />
           </Col>
         </Row>
         <Row gutter={16} style={{ marginTop: 20 }}>

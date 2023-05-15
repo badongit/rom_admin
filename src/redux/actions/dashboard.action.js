@@ -4,6 +4,7 @@ import {
   customerService,
   orderStatusService,
   orderMoneyService,
+  revenueStatistics,
 } from "../../service/dashboard.service";
 import * as types from "../constants";
 
@@ -67,6 +68,24 @@ export const dashboardOrderMoney = (params) => {
       const response = await orderMoneyService(params);
       dispatch({
         type: types.DASHBOARD_ORDER_MONEY,
+        data: response.data,
+      });
+    } catch (error) {
+      console.log(error?.message || error);
+      notification.open({
+        message: "Thất bại",
+        description: error?.message || error,
+      });
+    }
+  };
+};
+
+export const dashboardRevenue = (params) => {
+  return async (dispatch) => {
+    try {
+      const response = await revenueStatistics(params);
+      dispatch({
+        type: types.DASHBOARD_REVENUE,
         data: response.data,
       });
     } catch (error) {

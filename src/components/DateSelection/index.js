@@ -95,7 +95,7 @@ export default function DateSelection(props) {
   return (
     <Row
       className="items-center justify-content-center"
-      style={{ paddingBottom: 20 }}
+      style={{ paddingBottom: 20, zIndex: 100000000000000 }}
     >
       <div
         className="date-select-filter"

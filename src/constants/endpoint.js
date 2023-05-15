@@ -34,11 +34,6 @@ export const routers = [
     endpoint: Endpoint.DISH,
     text: "Quản lý món ăn",
   },
-
-  {
-    endpoint: Endpoint.STORAGE,
-    text: "Quản lý bộ nhớ",
-  },
   {
     endpoint: Endpoint.EMPLOYEE,
     text: "Quản lý nhân viên",
@@ -48,15 +43,7 @@ export const routers = [
     text: "Quản lý khách hàng",
   },
   {
-    endpoint: Endpoint.USER,
-    text: "Quản lý người dùng",
-  },
-  {
     endpoint: Endpoint.ORDER,
     text: "Quản lý đơn hàng",
-  },
-  {
-    endpoint: Endpoint.SETTING,
-    text: "Cài đặt website",
   },
 ];

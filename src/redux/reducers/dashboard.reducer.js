@@ -5,6 +5,8 @@ const initialState = {
   orders: [],
   customers: [],
   orderMoneys: [],
+  orderStatistic: [],
+  revenueStatistic: [],
 };
 
 const dashboardReducer = (state = initialState, action) => {
@@ -30,7 +32,11 @@ const dashboardReducer = (state = initialState, action) => {
         ...state,
         orderMoneys: action.data.items,
       };
-
+    case types.DASHBOARD_REVENUE:
+      return {
+        ...state,
+        revenueStatistic: action.data,
+      };
     default:
       return state;
   }
