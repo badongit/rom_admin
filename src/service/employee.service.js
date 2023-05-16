@@ -9,3 +9,5 @@ export const update = (id, data) =>
   axios.patch(`${APIEnum.EMPLOYEE}/${id}/admin`, data);
 export const remove = (id) => axios.delete(`${APIEnum.EMPLOYEE}/${id}`);
 export const detail = (id) => axios.get(`${APIEnum.EMPLOYEE}/${id}`);
+export const updateStatus = (id, data) =>
+  axios.patch(`${APIEnum.EMPLOYEE}/${id}/status`, data);

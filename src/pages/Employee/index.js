@@ -19,9 +19,16 @@ import {
   detailEmployee,
   listEmployee,
   updateEmployee,
+  updateStatusEmployee,
 } from "../../redux/actions/employee.action";
 import { listRole } from "../../redux/actions/role.action";
-import { DeleteOutlined, EditOutlined, RedoOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  RedoOutlined,
+  LockOutlined,
+  UnlockOutlined,
+} from "@ant-design/icons";
 import { formatDate, formatMoney } from "../../common/common";
 
 const { Option } = Select;
@@ -79,6 +86,11 @@ export default function Specification() {
       render: (record) => formatDate(record),
     },
     {
+      title: "Ngày nghỉ",
+      dataIndex: "dateOut",
+      render: (record) => (record ? formatDate(record) : ""),
+    },
+    {
       title: "Hành động",
       dataIndex: "",
       key: "id",
@@ -130,6 +142,52 @@ export default function Specification() {
                 }}
               />
             </Popconfirm>
+            {item.status !== EmployeeStatusEnum.OFF && (
+              <Popconfirm
+                title="Bạn có muốn khóa nhân viên này không?"
+                onConfirm={() =>
+                  dispatch(
+                    updateStatusEmployee(
+                      item.id,
+                      { status: EmployeeStatusEnum.OFF },
+                      () => dispatch(listEmployee({ page }))
+                    )
+                  )
+                }
+                okText="Có"
+                cancelText="Không"
+              >
+                <LockOutlined
+                  style={{
+                    cursor: "pointer",
+                    paddingRight: 10,
+                  }}
+                />
+              </Popconfirm>
+            )}
+            {item.status !== EmployeeStatusEnum.ACTIVE && (
+              <Popconfirm
+                title="Bạn có muốn mở khóa cho nhân viên này không?"
+                onConfirm={() =>
+                  dispatch(
+                    updateStatusEmployee(
+                      item.id,
+                      { status: EmployeeStatusEnum.ACTIVE },
+                      () => dispatch(listEmployee({ page }))
+                    )
+                  )
+                }
+                okText="Có"
+                cancelText="Không"
+              >
+                <UnlockOutlined
+                  style={{
+                    cursor: "pointer",
+                    paddingRight: 10,
+                  }}
+                />
+              </Popconfirm>
+            )}
           </>
         );
       },
@@ -315,3 +373,8 @@ export default function Specification() {
 }
 
 const EmployeeStatusText = ["Hoạt động", "Tạm nghỉ", "Nghỉ việc"];
+const EmployeeStatusEnum = {
+  ACTIVE: 0,
+  TEMP_LEAVE: 1,
+  OFF: 2,
+};

@@ -5,6 +5,7 @@ import {
   list,
   remove,
   update,
+  updateStatus,
 } from "../../service/employee.service";
 import * as types from "../constants";
 
@@ -84,6 +85,33 @@ export const deleteEmployee = (id, cb) => {
   return async (dispatch) => {
     try {
       const response = await remove(id);
+
+      if (response.statusCode !== 200) {
+        notification.open({
+          message: "Thất bại",
+          description: response.message,
+        });
+      } else {
+        notification.open({
+          message: "Thành công",
+          description: response.message,
+        });
+        cb();
+      }
+    } catch (error) {
+      console.log(error?.message || error);
+      notification.open({
+        message: "Thất bại",
+        description: error?.message || error,
+      });
+    }
+  };
+};
+
+export const updateStatusEmployee = (id, data, cb) => {
+  return async (dispatch) => {
+    try {
+      const response = await updateStatus(id, data);
 
       if (response.statusCode !== 200) {
         notification.open({
