@@ -16,14 +16,19 @@ const weeksInYear = (year) =>
     moment(new Date(year, 11, 31 - 7)).isoWeek()
   );
 
-const reportTypeEnum = {
-  WEEK: 0,
+export const reportTypeEnum = {
+  WEEK: 1,
+  MONTH: 2,
 };
 
 const groupOptions = [
   {
     name: "Tuần",
     value: reportTypeEnum.WEEK,
+  },
+  {
+    name: "Quý",
+    value: reportTypeEnum.MONTH,
   },
 ];
 
@@ -35,7 +40,7 @@ const directionEnum = {
 };
 
 export default function DateSelection(props) {
-  const { handleChange } = props;
+  const { handleChange, type } = props;
   const [value, setValue] = useState();
   const [unit, setUnit] = useState(groupOptions[0]);
   const [startDate, setStartDate] = useState();
@@ -45,28 +50,65 @@ export default function DateSelection(props) {
   const currentQuarter = moment().quarter();
 
   useEffect(() => {
-    setUnit(groupOptions[0]);
-    setValue(currentWeek);
-    const { start, end } = getStartAndEndDateOfUnit("week", currentWeek);
-    setStartDate(start);
-    setEndDate(end);
-    handleChange(start, end);
-  }, [currentMonth, currentQuarter, currentWeek, 0]);
+    let time;
+    switch (type) {
+      case reportTypeEnum.WEEK:
+        setUnit(groupOptions[0]);
+        setValue(currentWeek);
+        time = getStartAndEndDateOfUnit("week", currentWeek);
+        break;
+      case reportTypeEnum.MONTH:
+        setUnit(groupOptions[1]);
+        setValue(currentQuarter);
+        time = getStartAndEndDateOfUnit("quarter", currentQuarter);
+        break;
+      default:
+        setUnit(groupOptions[0]);
+        setValue(currentWeek);
+        time = getStartAndEndDateOfUnit("week", currentWeek);
+        break;
+    }
+    setStartDate(time.start);
+    setEndDate(time.end);
+    handleChange(time.start, time.end);
+  }, [currentMonth, currentQuarter, currentWeek, type, 0]);
 
   const getStartAndEndDateOfUnit = (unit, value) => {
     let isoYear = startDate ? moment(startDate).year() : moment().year();
-    let maxUnit = weeksInYear(moment(startDate).year());
+    let maxUnit = unit === "week" ? weeksInYear(moment(startDate).year()) : 4;
 
     if (value > maxUnit) {
       value = 1;
       isoYear++;
     }
-    let start = moment()
-      .isoWeekYear(isoYear)
-      .utc()
-      .isoWeek(value)
-      .startOf(unit);
-    let end = moment().isoWeekYear(isoYear).utc().isoWeek(value).endOf(unit);
+    let start, end;
+
+    switch (unit) {
+      case "week":
+        start = moment()
+          .isoWeekYear(isoYear)
+          .utc()
+          .isoWeek(value)
+          .startOf(unit);
+        end = moment().isoWeekYear(isoYear).utc().isoWeek(value).endOf(unit);
+        break;
+      case "quarter":
+        start = moment()
+          .isoWeekYear(isoYear)
+          .utc()
+          .quarter(value)
+          .startOf(unit);
+        end = moment().isoWeekYear(isoYear).utc().quarter(value).endOf(unit);
+        break;
+      default:
+        start = moment()
+          .isoWeekYear(isoYear)
+          .utc()
+          .isoWeek(value)
+          .startOf(unit);
+        end = moment().isoWeekYear(isoYear).utc().isoWeek(value).endOf(unit);
+        break;
+    }
 
     return { start, end, value };
   };
@@ -79,12 +121,16 @@ export default function DateSelection(props) {
     if (direction === directionEnum.down) {
       newValue = value - 1;
     }
-    const { start, end } = getStartAndEndDateOfUnit("week", newValue);
+
+    const { start, end } = getStartAndEndDateOfUnit(
+      type === reportTypeEnum.WEEK ? "week" : "quarter",
+      newValue
+    );
     if (start.isAfter(moment())) {
       return;
     }
     // eslint-disable-next-line default-case
-    let valueFormat = +start.format("W");
+    let valueFormat = +start.format(type === reportTypeEnum.WEEK ? "W" : "Q");
 
     setValue(valueFormat);
     setStartDate(start);

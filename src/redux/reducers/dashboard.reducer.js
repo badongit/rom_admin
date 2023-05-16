@@ -2,11 +2,10 @@ import * as types from "../constants";
 
 const initialState = {
   summary: {},
-  orders: [],
-  customers: [],
-  orderMoneys: [],
   orderStatistic: [],
   revenueStatistic: [],
+  dishes: [],
+  customers: [],
 };
 
 const dashboardReducer = (state = initialState, action) => {
@@ -19,19 +18,19 @@ const dashboardReducer = (state = initialState, action) => {
     case types.DASHBOARD_ORDER:
       return {
         ...state,
-        orders: action.data.items,
+        orderStatistic: action.data,
       };
     case types.DASHBOARD_CUSTOMER:
       return {
         ...state,
-        customers: action.data.users,
+        customers: action.data,
       };
-
-    case types.DASHBOARD_ORDER_MONEY:
+    case types.DASHBOARD_DISH:
       return {
         ...state,
-        orderMoneys: action.data.items,
+        dishes: action.data,
       };
+
     case types.DASHBOARD_REVENUE:
       return {
         ...state,
